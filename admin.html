@@ -105,6 +105,7 @@ table.t td { padding: 6px 8px; border-top: 1px solid var(--line); vertical-align
     <a href="#orders" data-page="orders">📦 Замовлення <span class="nb hidden" id="nbOrders"></span></a>
     <a href="#products" data-page="products">🍬 Товари</a>
     <a href="#bouquets" data-page="bouquets">💐 Готові букети</a>
+    <a href="#gallery" data-page="gallery">🖼 Галерея</a>
     <a href="#settings" data-page="settings">⚙️ Налаштування</a>
     <div style="flex:1"></div>
     <a href="index.html" target="_blank" rel="noopener">🌐 Відкрити сайт</a>
@@ -190,7 +191,7 @@ $('loginForm').addEventListener('submit', async e => {
 $('logoutBtn').addEventListener('click', async () => { await db.auth.signOut(); me = null; await enter(null); });
 
 /* ======================= НАВІГАЦІЯ ======================= */
-const PAGES = { orders: ['Замовлення', pgOrders], products: ['Товари', pgProducts], bouquets: ['Готові букети', pgBouquets], settings: ['Налаштування', pgSettings] };
+const PAGES = { orders: ['Замовлення', pgOrders], products: ['Товари', pgProducts], bouquets: ['Готові букети', pgBouquets], gallery: ['Галерея', pgGallery], settings: ['Налаштування', pgSettings] };
 let tok = 0;
 function route() {
   if (!me) return;
@@ -296,9 +297,9 @@ function orderDlg(o) {
 const info = (l, v) => el('div', null, el('div', { class: 'sub' }, l), el('div', null, v || '—'));
 
 /* ======================= ЗАВАНТАЖЕННЯ ФОТО ======================= */
-async function uploadImage(file, folder) {
+async function uploadImage(file, folder, max) {
   const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
-  const scale = Math.min(1, 900 / Math.max(bmp.width, bmp.height));
+  const scale = Math.min(1, (max || 900) / Math.max(bmp.width, bmp.height));
   const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * scale); cv.height = Math.round(bmp.height * scale);
   const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(bmp, 0, 0, cv.width, cv.height);
   const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.85));
@@ -307,13 +308,13 @@ async function uploadImage(file, folder) {
   if (up.error) throw up.error;
   return db.storage.from('shop').getPublicUrl(path).data.publicUrl;
 }
-function imageField(obj, folder) {
+function imageField(obj, folder, max) {
   const prev = el('div', { class: 'thumb' }, obj.image_url ? el('img', { src: obj.image_url, style: 'width:100%;height:100%;object-fit:cover;border-radius:10px', alt: '' }) : '🖼️');
   const file = el('input', { type: 'file', accept: 'image/jpeg,image/png,image/webp' });
   const msg = el('span', { class: 'sub' });
   file.addEventListener('change', async () => {
     if (!file.files[0]) return; msg.textContent = 'Завантажую…';
-    try { obj.image_url = await uploadImage(file.files[0], folder); prev.replaceChildren(el('img', { src: obj.image_url, style: 'width:100%;height:100%;object-fit:cover;border-radius:10px', alt: '' })); msg.textContent = 'Готово'; }
+    try { obj.image_url = await uploadImage(file.files[0], folder, max); prev.replaceChildren(el('img', { src: obj.image_url, style: 'width:100%;height:100%;object-fit:cover;border-radius:10px', alt: '' })); msg.textContent = 'Готово'; }
     catch (e) { msg.textContent = e.message || String(e); }
   });
   return el('div', { style: 'display:flex;gap:12px;align-items:center;margin-bottom:10px' }, prev, el('div', null, file, el('div', null, msg,
@@ -446,6 +447,75 @@ function bouquetDlg(b, products, fee) {
         const ent = Object.entries(merged).map(([product_id, qty]) => ({ bouquet_id: id, product_id, qty }));
         if (ent.length) { const ins = await db.from('shop_bouquet_items').insert(ent); if (ins.error) { err.textContent = ins.error.message; return; } }
         closeDlg(); toast('Збережено'); pgBouquets(++tok); } }, 'Зберегти')));
+}
+
+/* ======================= ГАЛЕРЕЯ ======================= */
+async function pgGallery(t) {
+  const [gl, bq] = await Promise.all([
+    db.from('shop_gallery').select('*').order('sort').order('created_at', { ascending: false }),
+    db.from('shop_bouquets').select('id, name').order('sort')
+  ]);
+  if (stale(t)) return;
+  if (gl.error) {
+    show(el('div', { class: 'panel' }, el('div', { class: 'pad' }, el('b', null, 'Таблиця галереї ще не створена.'),
+      el('p', null, 'У Supabase → SQL Editor виконайте файл ', el('code', null, 'gallery.sql'), ' (є в папці проєкту), потім оновіть сторінку.'), el('p', { class: 'err' }, gl.error.message))));
+    return;
+  }
+  const B = bq.data || []; const bName = Object.fromEntries(B.map(b => [b.id, b.name]));
+  const list = gl.data || [];
+  const file = el('input', { type: 'file', accept: 'image/jpeg,image/png,image/webp', multiple: true, class: 'hidden' });
+  const msg = el('span', { class: 'sub' });
+  file.addEventListener('change', async () => {
+    const files = [...file.files].slice(0, 30); file.value = '';
+    if (!files.length) return;
+    let ok = 0; let sort = list.length ? Math.max(...list.map(g => g.sort || 0)) : 0;
+    for (let i = 0; i < files.length; i++) {
+      msg.className = 'sub'; msg.textContent = 'Завантажую ' + (i + 1) + ' з ' + files.length + '…';
+      try {
+        const url = await uploadImage(files[i], 'gallery', 1400);
+        const title = files[i].name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim().slice(0, 80) || 'Без назви';
+        const { error } = await db.from('shop_gallery').insert({ title, image_url: url, sort: ++sort });
+        if (error) throw error; ok++;
+      } catch (e) { msg.className = 'err'; msg.textContent = (files[i].name + ': ' + (e.message || e)); break; }
+    }
+    if (ok) { toast('Додано фото: ' + ok + '. Тепер впишіть назви й описи (кнопка «Змінити»)'); pgGallery(++tok); }
+  });
+  show(el('div', { class: 'toolbar' }, el('button', { class: 'btn primary', onclick: () => file.click() }, '＋ Додати фото (можна кілька)'), file, msg),
+    el('div', { class: 'sub', style: 'margin-bottom:12px' }, 'Фото показуються на сайті в розділі «Галерея». Клік по фото відкриває вікно з назвою, описом і (якщо прив’язано) складом та ціною букета.'),
+    list.length ? el('div', { style: 'display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px' }, ...list.map(g =>
+      el('div', { class: 'panel', style: 'margin:0;' + (g.active ? '' : 'opacity:.55') },
+        el('img', { src: g.image_url, alt: '', style: 'width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f1ebe9' }),
+        el('div', { class: 'pad', style: 'padding:10px 12px' }, el('b', null, g.title), el('div', { class: 'sub' }, g.bouquet_id ? '💐 ' + (bName[g.bouquet_id] || 'букет') : 'без прив’язки до букета'),
+          el('div', { style: 'margin-top:8px' }, el('button', { class: 'btn small', onclick: () => galleryDlg(g, B) }, 'Змінити')))))) : el('div', { class: 'panel' }, el('div', { class: 'pad sub' }, 'Фото ще немає. Натисніть «Додати фото».')));
+}
+
+function galleryDlg(g, bouquets) {
+  const o = Object.assign({}, g);
+  const err = el('div', { class: 'err' });
+  const title = el('input', { class: 'in', value: o.title, maxlength: 80 });
+  const desc = el('textarea', { class: 'in' }); desc.value = o.description || '';
+  const sort = el('input', { class: 'in', type: 'number', value: o.sort || 0 });
+  const act = el('input', { type: 'checkbox', checked: o.active });
+  const bq = el('select', { class: 'in' }, el('option', { value: '' }, '— без прив’язки —'), ...bouquets.map(b => el('option', { value: b.id, selected: b.id === o.bouquet_id }, b.name)));
+  const tagBoxes = TAGS.map(([k, l]) => { const c = el('input', { type: 'checkbox', checked: (o.tags || []).includes(k) }); return [k, c, el('label', { style: 'display:inline-flex;gap:4px;margin-right:12px' }, c, l)]; });
+  openDlg(el('h3', null, 'Фото в галереї'), imageField(o, 'gallery', 1400),
+    el('label', { class: 'f' }, 'Назва', title), el('label', { class: 'f' }, 'Опис (показується у вікні)', desc),
+    el('div', { class: 'f' }, 'Категорії', el('div', null, tagBoxes.map(x => x[2]))),
+    el('label', { class: 'f' }, 'Прив’язати до готового букета (покаже склад, ціну й кнопку «У кошик»)', bq),
+    el('div', { class: 'two' }, el('label', { class: 'f' }, 'Порядок', sort), el('label', { style: 'display:flex;gap:8px;margin-top:22px' }, act, 'Показувати на сайті')), err,
+    el('div', { class: 'acts' },
+      el('button', { class: 'btn danger', style: 'margin-right:auto', onclick: async () => {
+        if (!(await confirmDlg('Видалити фото з галереї?', 'Файл у сховищі залишиться, зникне лише запис.', 'Видалити'))) { galleryDlg(g, bouquets); return; }
+        const { error } = await db.from('shop_gallery').delete().eq('id', g.id);
+        if (error) { toast(error.message, true); return; } closeDlg(); toast('Видалено'); pgGallery(++tok); } }, 'Видалити'),
+      el('button', { class: 'btn', onclick: closeDlg }, 'Скасувати'),
+      el('button', { class: 'btn primary', onclick: async () => {
+        if (!title.value.trim()) { err.textContent = 'Вкажіть назву'; return; }
+        const row = { title: title.value.trim(), description: desc.value.trim() || null, image_url: o.image_url, tags: tagBoxes.filter(x => x[1].checked).map(x => x[0]),
+          bouquet_id: bq.value || null, active: act.checked, sort: parseInt(sort.value, 10) || 0 };
+        if (!row.image_url) { err.textContent = 'Завантажте фото'; return; }
+        const { error } = await db.from('shop_gallery').update(row).eq('id', g.id);
+        if (error) { err.textContent = error.message; return; } closeDlg(); toast('Збережено'); pgGallery(++tok); } }, 'Зберегти')));
 }
 
 /* ======================= НАЛАШТУВАННЯ ======================= */
