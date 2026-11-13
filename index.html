@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Букетарня — букети з мила, цукерок і не тільки</title>
+<meta name="description" content="Подарункові букети ручної роботи: мильні квіти, цукерки, міні-алкоголь. Збери власний букет або обери готовий.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%90%3C/text%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg: #fff8f5; --card: #ffffff; --ink: #2b2a33; --muted: #7b7785; --line: #f0e3df;
+  --pink: #e5487f; --pink-d: #c9336a; --mint: #2f8f78; --gold: #f2b84b; --danger: #d63b3b;
+  --r: 18px; --shadow: 0 6px 24px rgba(180, 90, 110, .10);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+img { max-width: 100%; display: block; }
+a { color: var(--pink-d); }
+.hidden { display: none !important; }
+.wrap { width: min(1160px, 100% - 32px); margin: 0 auto; }
+h1, h2, h3 { line-height: 1.15; margin: 0; }
+section { padding: 56px 0 8px; scroll-margin-top: 72px; }
+.sec-title { font-size: clamp(26px, 4vw, 36px); margin-bottom: 8px; }
+.sec-sub { color: var(--muted); margin: 0 0 24px; max-width: 640px; }
+
+/* кнопки */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 20px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; transition: .15s; text-decoration: none; }
+.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn.primary { background: var(--pink); border-color: var(--pink); color: #fff; }
+.btn.primary:hover { background: var(--pink-d); }
+.btn.mint { background: var(--mint); border-color: var(--mint); color: #fff; }
+.btn.small { padding: 7px 14px; font-size: 14px; }
+.btn:disabled { opacity: .5; cursor: default; transform: none; box-shadow: none; }
+.chip { padding: 8px 16px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; font: inherit; }
+.chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 999px; background: #fdeaf1; color: var(--pink-d); font-size: 12px; font-weight: 700; }
+.tag.alc { background: #fff1d6; color: #9a6400; }
+
+/* шапка */
+.top { position: sticky; top: 0; z-index: 30; background: rgba(255, 248, 245, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 18px; height: 66px; }
+.logo { font-weight: 800; font-size: 22px; text-decoration: none; color: var(--ink); white-space: nowrap; }
+.logo span { color: var(--pink); }
+.nav { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+.nav a { padding: 8px 12px; border-radius: 999px; color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15px; }
+.nav a:hover { background: #fdeaf1; }
+.cartbtn { position: relative; }
+.cartbtn .n { position: absolute; top: -6px; right: -4px; min-width: 22px; height: 22px; border-radius: 11px; background: var(--ink); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+
+/* hero */
+.hero { padding: 36px 0 24px; }
+.hero-box { border-radius: 28px; padding: clamp(24px, 5vw, 56px); background: linear-gradient(135deg, #ffe3ec, #fff0d6 60%, #e4f6ef); display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: center; }
+.hero h1 { font-size: clamp(32px, 5.5vw, 56px); }
+.hero p { font-size: 18px; color: #5a5663; max-width: 520px; margin: 14px 0 22px; }
+.hero .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-art { font-size: clamp(90px, 16vw, 180px); text-align: center; filter: drop-shadow(0 10px 18px rgba(200, 80, 110, .25)); }
+.perks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+.perk { background: #fff; border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); font-size: 14px; }
+.perk b { display: block; font-size: 15px; }
+
+/* каталог */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; }
+.card { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); }
+.card .pic { aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-size: 64px; background: linear-gradient(135deg, #ffe9f0, #fff4e0); object-fit: cover; width: 100%; }
+.card .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.card h3 { font-size: 19px; }
+.card .desc { color: var(--muted); font-size: 14px; }
+.card .comp { font-size: 13px; color: #5a5663; }
+.card .foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.price { font-size: 22px; font-weight: 800; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* конструктор */
+.builder { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+.panel { background: #fff; border-radius: var(--r); box-shadow: var(--shadow); border: 1px solid var(--line); padding: 18px; margin-bottom: 18px; }
+.panel h3 { font-size: 20px; margin-bottom: 4px; }
+.panel .hint { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.pcard { border: 1.5px solid var(--line); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; background: #fff; }
+.pcard.sel { border-color: var(--pink); background: #fff6f9; }
+.pcard .ico { font-size: 34px; height: 56px; display: flex; align-items: center; }
+.pcard .ico img { height: 56px; width: 56px; object-fit: cover; border-radius: 10px; }
+.pcard b { font-size: 15px; }
+.pcard small { color: var(--muted); }
+.stepper { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; align-self: flex-start; }
+.stepper button { width: 34px; height: 34px; border: none; background: #fff; font-size: 18px; cursor: pointer; }
+.stepper button:disabled { opacity: .35; cursor: default; }
+.stepper span { min-width: 30px; text-align: center; font-weight: 700; }
+.summary { position: sticky; top: 84px; }
+.sum-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; font-size: 14px; }
+.sum-list li { display: flex; justify-content: space-between; gap: 8px; }
+.sum-total { display: flex; justify-content: space-between; font-size: 22px; font-weight: 800; border-top: 1.5px dashed var(--line); padding-top: 10px; margin-top: 8px; }
+.preview { min-height: 74px; display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; font-size: 28px; padding: 8px; background: linear-gradient(135deg, #fff0f5, #fff8e8); border-radius: 14px; margin-bottom: 12px; }
+.lock { text-align: center; padding: 30px 14px; border: 2px dashed #f0cf8a; background: #fffaf0; border-radius: 14px; }
+
+/* як це працює, відстеження, контакти */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.step { background: #fff; border-radius: var(--r); padding: 18px; border: 1px solid var(--line); }
+.step .num { width: 36px; height: 36px; border-radius: 50%; background: var(--pink); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.track-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; max-width: 760px; }
+.timeline { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0; }
+.timeline .st { padding: 6px 12px; border-radius: 999px; background: #f4ecea; color: var(--muted); font-size: 14px; }
+.timeline .st.done { background: #dff3ec; color: #1d6b58; font-weight: 700; }
+.timeline .st.cur { background: var(--mint); color: #fff; font-weight: 700; }
+footer { margin-top: 60px; background: #2b2a33; color: #d9d6e0; padding: 36px 0; }
+footer a { color: #ffc9dd; }
+footer .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 24px; }
+details.faq { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; margin-bottom: 8px; }
+details.faq summary { cursor: pointer; font-weight: 700; }
+
+/* поля */
+label.f { display: grid; gap: 4px; font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.in { width: 100%; padding: 11px 14px; border: 1.5px solid var(--line); border-radius: 12px; font: inherit; background: #fff; color: inherit; }
+.in:focus { outline: none; border-color: var(--pink); }
+textarea.in { resize: vertical; min-height: 70px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.opt { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-weight: 500; }
+.opt input { margin-top: 4px; }
+.opt.disabled { opacity: .45; cursor: not-allowed; }
+.opt small { display: block; color: var(--muted); }
+.err { color: var(--danger); font-size: 14px; min-height: 20px; }
+.ok { color: var(--mint); }
+
+/* кошик */
+#shade { position: fixed; inset: 0; background: rgba(30, 20, 30, .45); z-index: 50; }
+#drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: var(--bg); z-index: 60; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0, 0, 0, .15); }
+#drawer header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); background: #fff; }
+#drawer header h3 { font-size: 20px; }
+#drawer .scroll { flex: 1; overflow-y: auto; padding: 16px 20px; }
+#drawer footer.dfoot { background: #fff; color: inherit; margin: 0; padding: 14px 20px; border-top: 1px solid var(--line); }
+.line { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin-bottom: 10px; }
+.line .nm { font-weight: 700; }
+.line .sub { color: var(--muted); font-size: 13px; }
+.line details { grid-column: 1 / -1; font-size: 13px; color: #5a5663; }
+.x { border: none; background: none; cursor: pointer; font-size: 18px; color: var(--muted); }
+.totals { display: grid; gap: 4px; margin: 10px 0; }
+.totals div { display: flex; justify-content: space-between; }
+.totals .big { font-size: 20px; font-weight: 800; border-top: 1.5px dashed var(--line); padding-top: 8px; margin-top: 4px; }
+.done-box { text-align: center; padding: 20px 6px; }
+.code { font-size: 34px; font-weight: 800; letter-spacing: 4px; background: #fff; border: 2px dashed var(--pink); border-radius: 14px; padding: 10px 14px; display: inline-block; margin: 12px 0; }
+
+/* модальне вікно */
+#modal { position: fixed; inset: 0; z-index: 80; background: rgba(30, 20, 30, .55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.mbox { background: #fff; border-radius: 22px; padding: 26px; max-width: 420px; width: 100%; text-align: center; box-shadow: var(--shadow); }
+.mbox h3 { font-size: 24px; margin-bottom: 8px; }
+.mbox p { color: var(--muted); }
+.mbox .acts { display: flex; gap: 10px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+.banner { background: #fff3cd; border-bottom: 1px solid #ecd98b; padding: 8px 16px; text-align: center; font-size: 14px; }
+#toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 999px; z-index: 90; font-size: 14px; }
+
+@media (max-width: 900px) {
+  .hero-box { grid-template-columns: 1fr; } .hero-art { display: none; }
+  .perks, .steps { grid-template-columns: 1fr 1fr; }
+  .builder { grid-template-columns: 1fr; } .summary { position: static; }
+  .track-form { grid-template-columns: 1fr; }
+  footer .cols { grid-template-columns: 1fr; }
+  .nav a { padding: 6px 8px; font-size: 14px; }
+}
+@media (max-width: 560px) { .nav { display: none; } .perks, .steps, .row2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div id="demoBanner" class="banner hidden">Демо-режим: сайт ще не підключено до бази. Вставте ключі Supabase у файлі (початок скрипту), щоб замовлення зберігались.</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" id="logo">💐 <span id="shopName">Букетарня</span></a>
+    <nav class="nav">
+      <a href="#catalog">Букети</a>
+      <a href="#builder">Конструктор</a>
+      <a href="#how">Як замовити</a>
+      <a href="#track">Моє замовлення</a>
+      <a href="#contacts">Контакти</a>
+    </nav>
+    <button class="btn primary cartbtn" id="cartBtn" type="button">🛒 Кошик <span class="n hidden" id="cartN">0</span></button>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div class="hero-box">
+      <div>
+        <h1 id="heroTitle">Букети, які не в’януть</h1>
+        <p id="heroText">Мильні квіти, цукерки та подарункові міні-пляшки, зібрані вручну. Обери готовий букет або створи власний за кілька хвилин.</p>
+        <div class="cta">
+          <a class="btn primary" href="#catalog">Обрати готовий</a>
+          <a class="btn" href="#builder">Зібрати власний</a>
+        </div>
+      </div>
+      <div class="hero-art">💐</div>
+    </div>
+    <div class="perks">
+      <div class="perk"><b>🧼 Мильні квіти</b>Довго зберігають аромат</div>
+      <div class="perk"><b>🍬 Солодкі букети</b>З цукерок і шоколаду</div>
+      <div class="perk"><b>🥂 Для дорослих 18+</b>Міні-алкоголь у композиціях</div>
+      <div class="perk"><b>🚚 Доставка</b>Самовивіз, кур’єр, пошта</div>
+    </div>
+  </div>
+
+  <section id="catalog">
+    <div class="wrap">
+      <h2 class="sec-title">Готові букети</h2>
+      <p class="sec-sub">Обирайте з каталогу або змініть склад під себе: кнопка «Змінити склад» відкриє конструктор.</p>
+      <div class="filters" id="filters"></div>
+      <div class="grid" id="bqGrid"></div>
+      <p class="sub" id="bqEmpty" style="display:none;color:var(--muted)">У цій категорії поки порожньо.</p>
+    </div>
+  </section>
+
+  <section id="builder">
+    <div class="wrap">
+      <h2 class="sec-title">Конструктор букета</h2>
+      <p class="sec-sub">Оберіть упаковку, додайте мильні квіти, цукерки чи інші складники. Ціна рахується одразу.</p>
+      <div class="builder">
+        <div>
+          <div class="panel">
+            <h3>1. Упаковка</h3>
+            <p class="hint">Необов’язково, але з нею букет виглядає завершено.</p>
+            <div class="pgrid" id="baseGrid"></div>
+          </div>
+          <div class="panel">
+            <h3>2. Складники</h3>
+            <p class="hint">Додавайте скільки потрібно.</p>
+            <div class="tabs" id="itemTabs"></div>
+            <div id="itemArea"></div>
+          </div>
+        </div>
+        <aside class="panel summary">
+          <h3>Ваш букет</h3>
+          <div class="preview" id="preview"></div>
+          <ul class="sum-list" id="sumList"></ul>
+          <div class="sum-total"><span>Разом</span><span id="sumTotal">0 ₴</span></div>
+          <p class="hint" id="sumNote" style="margin-top:8px"></p>
+          <div style="display:grid;gap:8px;margin-top:10px">
+            <button class="btn primary" id="addCustom" type="button">Додати в кошик</button>
+            <button class="btn small" id="resetCustom" type="button">Очистити</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <h2 class="sec-title">Як замовити</h2>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><b>Оберіть букет</b><br>Готовий з каталогу або власний у конструкторі.</div>
+        <div class="step"><div class="num">2</div><b>Оформіть замовлення</b><br>Вкажіть дату, спосіб отримання й побажання для листівки.</div>
+        <div class="step"><div class="num">3</div><b>Ми зберемо і зв’яжемось</b><br>Підтвердимо склад та час за телефоном.</div>
+        <div class="step"><div class="num">4</div><b>Отримайте подарунок</b><br>Самовивіз, кур’єр по місту або Нова пошта.</div>
+      </div>
+      <div style="margin-top:22px">
+        <details class="faq"><summary>Чи можна замінити складники в готовому букеті?</summary><p>Так. Натисніть «Змінити склад» у картці букета й відредагуйте його в конструкторі.</p></details>
+        <details class="faq"><summary>Хто може замовити букет з алкоголем?</summary><p id="alcNotice">Алкогольні вироби продаються особам, яким виповнилося 18 років.</p></details>
+        <details class="faq"><summary>Чи відправляєте ви алкоголь поштою?</summary><p>Ні. Букети з алкоголем доступні лише для самовивозу та кур’єрської доставки по місту.</p></details>
+        <details class="faq"><summary>Як відстежити замовлення?</summary><p>Після оформлення ви отримаєте код замовлення. Введіть його разом із номером телефону в розділі «Моє замовлення».</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="track">
+    <div class="wrap">
+      <h2 class="sec-title">Моє замовлення</h2>
+      <p class="sec-sub">Введіть код замовлення та номер телефону, який вказували під час оформлення.</p>
+      <div class="track-form">
+        <input class="in" id="trCode" placeholder="Код замовлення (наприклад A1B2C3D4)" maxlength="12" autocomplete="off">
+        <input class="in" id="trPhone" placeholder="Телефон" inputmode="tel" autocomplete="tel">
+        <button class="btn primary" id="trGo" type="button">Знайти</button>
+      </div>
+      <div class="err" id="trErr"></div>
+      <div id="trResult"></div>
+    </div>
+  </section>
+</main>
+
+<footer id="contacts">
+  <div class="wrap cols">
+    <div><b style="font-size:20px" id="ftName">Букетарня</b><p id="ftAbout"></p></div>
+    <div><b>Контакти</b><p><span id="ftPhone"></span><br><span id="ftCity"></span><br><a id="ftTg" class="hidden" target="_blank" rel="noopener"></a><br><a id="ftIg" class="hidden" target="_blank" rel="noopener"></a></p></div>
+    <div><b>Важливо</b><p>Алкогольні вироби — лише 18+. Під час отримання потрібен документ.</p></div>
+  </div>
+</footer>
+
+<div id="shade" class="hidden"></div>
+<aside id="drawer" class="hidden" aria-label="Кошик">
+  <header><h3 id="dTitle">Кошик</h3><button class="x" id="dClose" type="button" aria-label="Закрити">✕</button></header>
+  <div class="scroll" id="dBody"></div>
+  <footer class="dfoot" id="dFoot"></footer>
+</aside>
+<div id="modal" class="hidden"><div class="mbox" id="mbox"></div></div>
+
+<script>
+/* ======================= НАЛАШТУВАННЯ ======================= */
+const SUPABASE_URL = '';   // ← вставте Project URL з Supabase
+const SUPABASE_KEY = '';   // ← вставте publishable (anon) ключ
+
+/* ======================= ДЕМО-ДАНІ (якщо ключів немає) ======================= */
+const DEMO_DATA = (() => {
+  const c = [
+    { id: 'c1', slug: 'packaging', name: 'Упаковка', emoji: '🎀', kind: 'base', is_alcohol: false, sort: 1 },
+    { id: 'c2', slug: 'soap', name: 'Мильні квіти', emoji: '🧼', kind: 'item', is_alcohol: false, sort: 2 },
+    { id: 'c3', slug: 'candy', name: 'Цукерки та солодощі', emoji: '🍬', kind: 'item', is_alcohol: false, sort: 3 },
+    { id: 'c4', slug: 'alcohol', name: 'Алкоголь (18+)', emoji: '🥂', kind: 'item', is_alcohol: true, sort: 4 },
+    { id: 'c5', slug: 'decor', name: 'Декор', emoji: '✨', kind: 'item', is_alcohol: false, sort: 5 }
+  ];
+  const p = (id, cat, name, price, extra) => Object.assign({ id, category_id: cat, name, price, unit: 'шт', stock: null, image_url: null, is_alcohol: false, description: '', volume: null, abv: null, active: true, sort: 0 }, extra || {});
+  const products = [
+    p('p1', 'c1', 'Крафт-папір та стрічка', 60, { unit: 'компл.', description: 'Класична упаковка' }),
+    p('p2', 'c1', 'Флористична плівка', 80, { unit: 'компл.' }),
+    p('p3', 'c1', 'Коробка-куб з кришкою', 150),
+    p('p4', 'c1', 'Плетений кошик', 220),
+    p('p5', 'c2', 'Мильна троянда', 35, { description: 'Ароматна, ручної роботи' }),
+    p('p6', 'c2', 'Мильна півонія', 55),
+    p('p7', 'c2', 'Мильний тюльпан', 30),
+    p('p8', 'c2', 'Мильна орхідея', 70),
+    p('p9', 'c3', 'Шоколадна цукерка', 12),
+    p('p10', 'c3', 'Цукерка з кокосом', 14),
+    p('p11', 'c3', 'Льодяник на паличці', 18),
+    p('p12', 'c3', 'Міні-шоколадка', 25),
+    p('p13', 'c4', 'Коньяк міні', 95, { is_alcohol: true, volume: '50 мл', abv: 40 }),
+    p('p14', 'c4', 'Віскі міні', 110, { is_alcohol: true, volume: '50 мл', abv: 40 }),
+    p('p15', 'c4', 'Шампанське', 190, { is_alcohol: true, volume: '0,2 л', abv: 11 }),
+    p('p16', 'c4', 'Вино червоне', 250, { is_alcohol: true, volume: '0,375 л', abv: 12.5, stock: 3 }),
+    p('p17', 'c5', 'Атласна стрічка', 20),
+    p('p18', 'c5', 'Топпер-листівка', 30),
+    p('p19', 'c5', 'Декоративні метелики', 25, { unit: 'компл.' })
+  ];
+  const b = (id, name, description, price, tags, items) => ({ id, name, description, price, image_url: null, tags, active: true, sort: 0, items: items.map(([product_id, qty]) => ({ product_id, qty })) });
+  const bouquets = [
+    b('b1', 'Ніжність', 'Мильні троянди й півонії в крафті з солодкими акцентами', 420, ['soap', 'candy'], [['p1', 1], ['p5', 5], ['p6', 2], ['p9', 6]]),
+    b('b2', 'Солодке свято', 'Яскравий букет з цукерок і льодяників у плівці', 380, ['candy'], [['p2', 1], ['p9', 12], ['p10', 8], ['p11', 5]]),
+    b('b3', 'Для нього', 'Міні-коньяк і віскі, шоколад та декор у коробці', 780, ['alcohol', 'candy'], [['p3', 1], ['p13', 2], ['p14', 2], ['p12', 3], ['p18', 1]]),
+    b('b4', 'Святковий мікс', 'Мильні квіти, шампанське й цукерки в кошику', 1190, ['mixed', 'alcohol', 'soap', 'candy'], [['p4', 1], ['p8', 3], ['p5', 5], ['p15', 1], ['p9', 10], ['p17', 1]])
+  ];
+  return {
+    categories: c, products, bouquets,
+    settings: {
+      shop: { name: 'Букетарня', tagline: 'Букети, які не в’януть', phone: '+380 00 000 00 00', telegram: '', instagram: '', city: 'Ваше місто', about: 'Збираємо оригінальні подарункові букети вручну: мильні квіти, солодкі та алкогольні композиції.' },
+      prices: { assembly_fee: 120, courier_fee: 100, free_delivery_from: 1500, min_order: 300 },
+      texts: { alcohol_notice: 'Алкогольні вироби продаються особам, яким виповнилося 18 років. Під час отримання замовлення потрібен документ, що підтверджує вік.' }
+    }
+  };
+})();
+
+/* ======================= ДОПОМІЖНЕ ======================= */
+const DEMO = !SUPABASE_URL || !SUPABASE_KEY;
+const db = DEMO ? null : supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  if (props) for (const [k, v] of Object.entries(props)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'text') e.textContent = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, '');
+    else e.setAttribute(k, v);
+  }
+  kids.flat(Infinity).forEach(c => { if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(String(c))); });
+  return e;
+}
+const money = n => Number(n || 0).toLocaleString('uk-UA', { minimumFractionDigits: Number(n) % 1 ? 2 : 0, maximumFractionDigits: 2 }) + ' ₴';
+const TAG_EMOJI = { soap: '🧼', candy: '🍬', alcohol: '🥂', mixed: '💐' };
+const TAG_NAME = { soap: 'Мильні', candy: 'Солодкі', alcohol: 'Алкогольні 18+', mixed: 'Мікс' };
+const STATUS = [['new', 'Прийнято'], ['confirmed', 'Підтверджено'], ['assembling', 'Збираємо букет'], ['ready', 'Готовий'], ['delivered', 'Отримано'], ['cancelled', 'Скасовано']];
+function toast(msg) {
+  const t = h('div', { id: 'toast' }, msg);
+  document.body.append(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+/* ======================= СТАН ======================= */
+const S = { cats: [], products: [], bouquets: [], settings: {}, cart: [], filter: 'all', tab: null,
+  builder: { base: null, qty: {} }, view: 'cart', age: false };
+const pById = {};
+const cById = {};
+try { S.age = localStorage.getItem('bq_age18') === '1'; } catch (e) { /* ігноруємо */ }
+try { S.cart = JSON.parse(localStorage.getItem('bq_cart_v1') || '[]'); } catch (e) { S.cart = []; }
+const saveCart = () => { try { localStorage.setItem('bq_cart_v1', JSON.stringify(S.cart)); } catch (e) { /* ігноруємо */ } };
+
+const prices = () => Object.assign({ assembly_fee: 0, courier_fee: 0, free_delivery_from: 0, min_order: 0 }, S.settings.prices || {});
+const stockLeft = p => (p && p.stock != null ? p.stock : Infinity);
+
+/* ======================= ЗАВАНТАЖЕННЯ ДАНИХ ======================= */
+async function loadAll() {
+  if (DEMO) {
+    S.cats = DEMO_DATA.categories; S.products = DEMO_DATA.products; S.bouquets = DEMO_DATA.bouquets; S.settings = DEMO_DATA.settings;
+    $('#demoBanner').classList.remove('hidden');
+  } else {
+    const [st, ct, pr, bq] = await Promise.all([
+      db.from('shop_settings').select('*'),
+      db.from('shop_categories').select('*').order('sort'),
+      db.from('shop_products').select('*').eq('active', true).order('sort'),
+      db.from('shop_bouquets').select('*, shop_bouquet_items(product_id, qty)').eq('active', true).order('sort')
+    ]);
+    const err = st.error || ct.error || pr.error || bq.error;
+    if (err) throw err;
+    S.settings = Object.fromEntries((st.data || []).map(r => [r.key, r.value]));
+    S.cats = ct.data || []; S.products = pr.data || [];
+    S.bouquets = (bq.data || []).map(b => ({ ...b, items: b.shop_bouquet_items || [] }));
+  }
+  S.cats.forEach(c => { cById[c.id] = c; });
+  S.products.forEach(p => { pById[p.id] = p; });
+  // прибираємо з кошика товари, яких більше немає
+  S.cart = S.cart.filter(l => l.kind === 'product' ? pById[l.id] : l.kind === 'bouquet' ? S.bouquets.some(b => b.id === l.id) : (l.comps || []).every(c => pById[c.id]));
+  saveCart();
+}
+
+/* ======================= ЦІНИ Й СКЛАД ======================= */
+const bouquetAlc = b => b.items.some(i => pById[i.product_id] && pById[i.product_id].is_alcohol);
+function lineUnit(l) {
+  if (l.kind === 'product') return pById[l.id].price;
+  if (l.kind === 'bouquet') return S.bouquets.find(b => b.id === l.id).price;
+  return prices().assembly_fee + l.comps.reduce((a, c) => a + pById[c.id].price * c.qty, 0);
+}
+const lineName = l => (l.kind === 'product' ? pById[l.id].name : l.kind === 'bouquet' ? S.bouquets.find(b => b.id === l.id).name : 'Власний букет');
+function lineAlc(l) {
+  if (l.kind === 'product') return pById[l.id].is_alcohol;
+  if (l.kind === 'bouquet') return bouquetAlc(S.bouquets.find(b => b.id === l.id));
+  return l.comps.some(c => pById[c.id].is_alcohol);
+}
+function lineComp(l) {
+  if (l.kind === 'bouquet') return S.bouquets.find(b => b.id === l.id).items.map(i => [pById[i.product_id] ? pById[i.product_id].name : '—', i.qty]);
+  if (l.kind === 'custom') return l.comps.map(c => [pById[c.id].name, c.qty]);
+  return [];
+}
+const cartSub = () => S.cart.reduce((a, l) => a + lineUnit(l) * l.qty, 0);
+const cartAlc = () => S.cart.some(lineAlc);
+const cartCount = () => S.cart.reduce((a, l) => a + l.qty, 0);
+function deliveryFee(method, sub) {
+  const p = prices();
+  return method === 'courier' && sub < p.free_delivery_from ? p.courier_fee : 0;
+}
+
+/* ======================= ВІК 18+ ======================= */
+function askAge() {
+  if (S.age) return Promise.resolve(true);
+  return new Promise(resolve => {
+    const done = v => { $('#modal').classList.add('hidden'); resolve(v); };
+    const yes = h('button', { class: 'btn primary', type: 'button', onclick: () => { S.age = true; try { localStorage.setItem('bq_age18', '1'); } catch (e) { /* */ } done(true); } }, 'Так, мені є 18');
+    const no = h('button', { class: 'btn', type: 'button', onclick: () => { toast('Цей розділ доступний лише повнолітнім'); done(false); } }, 'Ні');
+    $('#mbox').replaceChildren(h('h3', null, '🔞 Вам виповнилося 18 років?'),
+      h('p', null, (S.settings.texts && S.settings.texts.alcohol_notice) || 'Алкогольні вироби продаються лише особам, яким виповнилося 18 років.'),
+      h('div', { class: 'acts' }, yes, no));
+    $('#modal').classList.remove('hidden');
+  });
+}
+
+/* ======================= ШАПКА Й ПІДВАЛ ======================= */
+function renderShell() {
+  const sh = S.settings.shop || {};
+  const name = sh.name || 'Букетарня';
+  $('#shopName').textContent = name; $('#ftName').textContent = name; document.title = name + ' — букети з мила, цукерок і не тільки';
+  if (sh.tagline) $('#heroTitle').textContent = sh.tagline;
+  $('#ftAbout').textContent = sh.about || '';
+  $('#ftPhone').textContent = sh.phone ? '📞 ' + sh.phone : '';
+  $('#ftCity').textContent = sh.city ? '📍 ' + sh.city : '';
+  const tg = $('#ftTg'); const ig = $('#ftIg');
+  if (sh.telegram) { tg.textContent = 'Telegram'; tg.href = sh.telegram.startsWith('http') ? sh.telegram : 'https://t.me/' + sh.telegram.replace('@', ''); tg.classList.remove('hidden'); }
+  if (sh.instagram) { ig.textContent = 'Instagram'; ig.href = sh.instagram.startsWith('http') ? sh.instagram : 'https://instagram.com/' + sh.instagram.replace('@', ''); ig.classList.remove('hidden'); }
+  if (S.settings.texts && S.settings.texts.alcohol_notice) $('#alcNotice').textContent = S.settings.texts.alcohol_notice;
+}
+function renderCartBadge() {
+  const n = cartCount();
+  $('#cartN').textContent = n;
+  $('#cartN').classList.toggle('hidden', !n);
+}
+
+/* ======================= КАТАЛОГ ГОТОВИХ БУКЕТІВ ======================= */
+function renderCatalog() {
+  const tags = ['all', ...Object.keys(TAG_NAME).filter(t => S.bouquets.some(b => (b.tags || []).includes(t)))];
+  $('#filters').replaceChildren(...tags.map(t => h('button', { class: 'chip' + (S.filter === t ? ' active' : ''), type: 'button',
+    onclick: () => { S.filter = t; renderCatalog(); } }, t === 'all' ? 'Усі' : (TAG_EMOJI[t] || '') + ' ' + TAG_NAME[t])));
+  const list = S.bouquets.filter(b => S.filter === 'all' || (b.tags || []).includes(S.filter));
+  $('#bqEmpty').style.display = list.length ? 'none' : 'block';
+  $('#bqGrid').replaceChildren(...list.map(b => {
+    const alc = bouquetAlc(b);
+    const pic = b.image_url ? h('img', { class: 'pic', src: b.image_url, alt: b.name, loading: 'lazy' })
+      : h('div', { class: 'pic' }, (b.tags || []).map(t => TAG_EMOJI[t]).filter(Boolean).slice(0, 3).join(' ') || '💐');
+    return h('article', { class: 'card' }, pic,
+      h('div', { class: 'body' },
+        h('div', { class: 'tags' }, alc ? h('span', { class: 'tag alc' }, '18+') : null, ...(b.tags || []).filter(t => TAG_NAME[t] && t !== 'alcohol').map(t => h('span', { class: 'tag' }, TAG_NAME[t]))),
+        h('h3', null, b.name),
+        h('div', { class: 'desc' }, b.description || ''),
+        h('div', { class: 'comp' }, b.items.map(i => (pById[i.product_id] ? pById[i.product_id].name : '—') + ' ×' + i.qty).join(' · ')),
+        h('div', { class: 'foot' }, h('span', { class: 'price' }, money(b.price)),
+          h('div', { style: 'display:flex;gap:6px;flex-wrap:wrap' },
+            h('button', { class: 'btn small', type: 'button', onclick: () => editInBuilder(b) }, 'Змінити склад'),
+            h('button', { class: 'btn small primary', type: 'button', onclick: () => addBouquet(b) }, 'У кошик')))));
+  }));
+}
+async function addBouquet(b) {
+  if (bouquetAlc(b) && !(await askAge())) return;
+  const ex = S.cart.find(l => l.kind === 'bouquet' && l.id === b.id);
+  if (ex) ex.qty = Math.min(99, ex.qty + 1); else S.cart.push({ uid: 'l' + Date.now() + Math.random().toString(36).slice(2, 6), kind: 'bouquet', id: b.id, qty: 1 });
+  saveCart(); renderCartBadge(); toast('Додано в кошик: ' + b.name);
+}
+function editInBuilder(b) {
+  const base = b.items.find(i => pById[i.product_id] && (cById[pById[i.product_id].category_id] || {}).kind === 'base');
+  S.builder = { base: base ? base.product_id : null, qty: {} };
+  b.items.forEach(i => { const p = pById[i.product_id]; if (p && (!base || i.product_id !== base.product_id)) S.builder.qty[i.product_id] = i.qty; });
+  renderBuilder();
+  document.getElementById('builder').scrollIntoView({ behavior: 'smooth' });
+  toast('Склад «' + b.name + '» завантажено в конструктор');
+}
+
+/* ======================= КОНСТРУКТОР ======================= */
+const itemCats = () => S.cats.filter(c => c.kind === 'item' && S.products.some(p => p.category_id === c.id));
+function builderComps() {
+  const comps = [];
+  if (S.builder.base && pById[S.builder.base]) comps.push({ id: S.builder.base, qty: 1 });
+  Object.entries(S.builder.qty).forEach(([id, q]) => { if (q > 0 && pById[id]) comps.push({ id, qty: q }); });
+  return comps;
+}
+const builderItemsCount = () => Object.values(S.builder.qty).reduce((a, q) => a + q, 0);
+
+function stepper(value, onChange, max) {
+  const minus = h('button', { type: 'button', 'aria-label': 'Менше', disabled: value <= 0, onclick: () => onChange(value - 1) }, '−');
+  const plus = h('button', { type: 'button', 'aria-label': 'Більше', disabled: value >= max, onclick: () => onChange(value + 1) }, '+');
+  return h('div', { class: 'stepper' }, minus, h('span', null, value), plus);
+}
+function prodIcon(p) {
+  const c = cById[p.category_id];
+  return h('div', { class: 'ico' }, p.image_url ? h('img', { src: p.image_url, alt: '', loading: 'lazy' }) : (c ? c.emoji : '🎁'));
+}
+
+function renderBuilder() {
+  const bases = S.products.filter(p => (cById[p.category_id] || {}).kind === 'base');
+  $('#baseGrid').replaceChildren(
+    h('div', { class: 'pcard' + (!S.builder.base ? ' sel' : ''), style: 'cursor:pointer', onclick: () => { S.builder.base = null; renderBuilder(); } },
+      h('div', { class: 'ico' }, '🚫'), h('b', null, 'Без упаковки'), h('small', null, 'Лише складники')),
+    ...bases.map(p => h('div', { class: 'pcard' + (S.builder.base === p.id ? ' sel' : ''), style: 'cursor:pointer', onclick: () => { S.builder.base = p.id; renderBuilder(); } },
+      prodIcon(p), h('b', null, p.name), h('small', null, p.description || ''), h('b', null, money(p.price)))));
+
+  const cats = itemCats();
+  if (!S.tab || !cats.some(c => c.slug === S.tab)) S.tab = cats[0] ? cats[0].slug : null;
+  $('#itemTabs').replaceChildren(...cats.map(c => h('button', { class: 'chip' + (S.tab === c.slug ? ' active' : ''), type: 'button',
+    onclick: async () => { if (c.is_alcohol && !(await askAge())) return; S.tab = c.slug; renderBuilder(); } }, c.emoji + ' ' + c.name)));
+  const cur = cats.find(c => c.slug === S.tab);
+  const area = $('#itemArea');
+  if (!cur) { area.replaceChildren(); }
+  else if (cur.is_alcohol && !S.age) {
+    area.replaceChildren(h('div', { class: 'lock' }, h('b', null, '🔞 Розділ для повнолітніх'), h('p', null, 'Підтвердіть, що вам виповнилося 18 років.'),
+      h('button', { class: 'btn primary', type: 'button', onclick: async () => { if (await askAge()) renderBuilder(); } }, 'Підтвердити вік')));
+  } else {
+    area.replaceChildren(h('div', { class: 'pgrid' }, ...S.products.filter(p => p.category_id === cur.id).map(p => {
+      const q = S.builder.qty[p.id] || 0;
+      const left = stockLeft(p);
+      return h('div', { class: 'pcard' + (q ? ' sel' : '') }, prodIcon(p), h('b', null, p.name),
+        h('small', null, [p.volume, p.abv != null ? p.abv + '%' : null, left !== Infinity ? 'залишилось ' + left : null].filter(Boolean).join(' · ') || p.description || ''),
+        h('b', null, money(p.price) + (p.unit && p.unit !== 'шт' ? ' / ' + p.unit : '')),
+        left === 0 ? h('small', { style: 'color:var(--danger)' }, 'Немає в наявності') : stepper(q, v => { S.builder.qty[p.id] = Math.max(0, v); renderBuilder(); }, Math.min(99, left)));
+    })));
+  }
+  renderSummary();
+}
+
+function renderSummary() {
+  const comps = builderComps();
+  const fee = prices().assembly_fee;
+  const total = comps.reduce((a, c) => a + pById[c.id].price * c.qty, 0) + (comps.length ? fee : 0);
+  $('#sumList').replaceChildren(...comps.map(c => h('li', null, h('span', null, pById[c.id].name + ' × ' + c.qty), h('span', null, money(pById[c.id].price * c.qty)))),
+    comps.length ? h('li', null, h('span', null, 'Збірка букета'), h('span', null, money(fee))) : h('li', { style: 'color:var(--muted)' }, 'Поки порожньо: додайте складники'));
+  $('#sumTotal').textContent = money(total);
+  const emojis = [];
+  comps.forEach(c => { const cat = cById[pById[c.id].category_id]; for (let i = 0; i < Math.min(c.qty, 8); i++) emojis.push(cat ? cat.emoji : '🎁'); });
+  $('#preview').textContent = emojis.slice(0, 40).join('') || '💐';
+  $('#sumNote').textContent = builderItemsCount() ? '' : 'Додайте хоча б один складник, щоб додати букет у кошик.';
+  $('#addCustom').disabled = !builderItemsCount();
+}
+
+$('#resetCustom').addEventListener('click', () => { S.builder = { base: null, qty: {} }; renderBuilder(); });
+$('#addCustom').addEventListener('click', async () => {
+  const comps = builderComps();
+  if (!builderItemsCount()) return;
+  if (comps.some(c => pById[c.id].is_alcohol) && !(await askAge())) return;
+  S.cart.push({ uid: 'l' + Date.now() + Math.random().toString(36).slice(2, 6), kind: 'custom', qty: 1, comps });
+  saveCart(); renderCartBadge(); toast('Власний букет додано в кошик');
+  S.builder = { base: null, qty: {} }; renderBuilder();
+});
+
+/* ======================= КОШИК І ОФОРМЛЕННЯ ======================= */
+function openCart(view) {
+  S.view = view || 'cart';
+  $('#shade').classList.remove('hidden'); $('#drawer').classList.remove('hidden');
+  renderDrawer();
+}
+function closeCart() { $('#shade').classList.add('hidden'); $('#drawer').classList.add('hidden'); }
+$('#cartBtn').addEventListener('click', () => openCart('cart'));
+$('#dClose').addEventListener('click', closeCart);
+$('#shade').addEventListener('click', closeCart);
+
+function lineNode(l) {
+  const comp = lineComp(l);
+  const stepperEl = h('div', { class: 'stepper' },
+    h('button', { type: 'button', onclick: () => { l.qty--; if (l.qty < 1) S.cart = S.cart.filter(x => x !== l); saveCart(); renderCartBadge(); renderDrawer(); } }, '−'),
+    h('span', null, l.qty),
+    h('button', { type: 'button', disabled: l.qty >= 99, onclick: () => { l.qty++; saveCart(); renderCartBadge(); renderDrawer(); } }, '+'));
+  return h('div', { class: 'line' },
+    h('div', null, h('div', { class: 'nm' }, lineName(l), lineAlc(l) ? h('span', { class: 'tag alc', style: 'margin-left:6px' }, '18+') : null), h('div', { class: 'sub' }, money(lineUnit(l)) + ' за шт.')),
+    h('button', { class: 'x', type: 'button', 'aria-label': 'Видалити', onclick: () => { S.cart = S.cart.filter(x => x !== l); saveCart(); renderCartBadge(); renderDrawer(); } }, '✕'),
+    comp.length ? h('details', null, h('summary', null, 'Склад (' + comp.length + ')'), h('div', null, comp.map(([n, q]) => h('div', null, n + ' × ' + q)))) : null,
+    stepperEl, h('div', { style: 'text-align:right;font-weight:800' }, money(lineUnit(l) * l.qty)));
+}
+
+function renderDrawer() {
+  const body = $('#dBody'); const foot = $('#dFoot');
+  const title = $('#dTitle');
+  if (S.view === 'done') return;
+  if (!S.cart.length) {
+    title.textContent = 'Кошик';
+    body.replaceChildren(h('div', { style: 'text-align:center;padding:40px 10px;color:var(--muted)' }, h('div', { style: 'font-size:56px' }, '🛒'), h('p', null, 'У кошику поки порожньо.'),
+      h('a', { class: 'btn primary', href: '#catalog', onclick: closeCart }, 'До каталогу')));
+    foot.replaceChildren(); return;
+  }
+  if (S.view === 'cart') {
+    title.textContent = 'Кошик';
+    body.replaceChildren(...S.cart.map(lineNode));
+    const sub = cartSub();
+    foot.replaceChildren(h('div', { class: 'totals' }, h('div', { class: 'big' }, h('span', null, 'Сума'), h('span', null, money(sub)))),
+      sub < prices().min_order ? h('div', { class: 'err' }, 'Мінімальна сума замовлення: ' + money(prices().min_order)) : null,
+      h('button', { class: 'btn primary', style: 'width:100%', type: 'button', disabled: sub < prices().min_order, onclick: () => { S.view = 'checkout'; renderDrawer(); } }, 'Оформити замовлення'));
+    return;
+  }
+  renderCheckout();
+}
+
+const checkout = { delivery: 'pickup', payment: 'on_receipt', age: false };
+function renderCheckout() {
+  const body = $('#dBody'); const foot = $('#dFoot'); $('#dTitle').textContent = 'Оформлення';
+  const alc = cartAlc();
+  if (alc && checkout.delivery === 'post') checkout.delivery = 'pickup';
+  const tomorrow = new Date(Date.now() + 864e5).toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  const f = {};
+  const inp = (id, props) => (f[id] = h('input', Object.assign({ class: 'in', id: 'ck_' + id }, props)));
+  const err = h('div', { class: 'err' });
+  const totals = h('div', { class: 'totals' });
+  const drawTotals = () => {
+    const sub = cartSub(); const fee = deliveryFee(checkout.delivery, sub);
+    totals.replaceChildren(h('div', null, h('span', null, 'Букети'), h('span', null, money(sub))),
+      h('div', null, h('span', null, 'Доставка'), h('span', null, checkout.delivery === 'courier' ? (fee ? money(fee) : 'безкоштовно') : checkout.delivery === 'post' ? 'за тарифами перевізника' : '—')),
+      h('div', { class: 'big' }, h('span', null, 'До сплати'), h('span', null, money(sub + fee))));
+  };
+  const optDel = (val, title, sub, disabled) => h('label', { class: 'opt' + (disabled ? ' disabled' : '') },
+    h('input', { type: 'radio', name: 'dm', value: val, checked: checkout.delivery === val, disabled, onchange: () => { checkout.delivery = val; $('#addrBox').classList.toggle('hidden', val === 'pickup'); drawTotals(); } }),
+    h('span', null, h('b', null, title), h('small', null, sub)));
+  const p = prices();
+  const alcCheck = h('input', { type: 'checkbox', id: 'ck_age', checked: checkout.age, onchange: e => { checkout.age = e.target.checked; } });
+  body.replaceChildren(
+    h('button', { class: 'btn small', type: 'button', onclick: () => { S.view = 'cart'; renderDrawer(); } }, '← Назад до кошика'),
+    h('h3', { style: 'margin:14px 0 8px' }, 'Ваші дані'),
+    h('label', { class: 'f' }, 'Ім’я', inp('name', { placeholder: 'Як до вас звертатись', maxlength: 80, autocomplete: 'name' })),
+    h('div', { class: 'row2' },
+      h('label', { class: 'f' }, 'Телефон', inp('phone', { placeholder: '+380…', inputmode: 'tel', autocomplete: 'tel' })),
+      h('label', { class: 'f' }, 'Email (необов’язково)', inp('email', { type: 'email', autocomplete: 'email' }))),
+    h('h3', { style: 'margin:14px 0 8px' }, 'Отримання'),
+    optDel('pickup', 'Самовивіз', 'Безкоштовно, адресу уточнимо за телефоном', false),
+    optDel('courier', 'Кур’єр по місту', p.free_delivery_from ? money(p.courier_fee) + ', безкоштовно від ' + money(p.free_delivery_from) : money(p.courier_fee), false),
+    optDel('post', 'Нова пошта', alc ? 'Алкоголь поштою не пересилається' : 'Вартість за тарифами перевізника', alc),
+    h('div', { id: 'addrBox', class: checkout.delivery === 'pickup' ? 'hidden' : '' },
+      h('div', { class: 'row2' }, h('label', { class: 'f' }, 'Місто', inp('city', { autocomplete: 'address-level2' })),
+        h('label', { class: 'f' }, 'Адреса / відділення', inp('address', { autocomplete: 'street-address' })))),
+    h('div', { class: 'row2' },
+      h('label', { class: 'f' }, 'Дата', inp('date', { type: 'date', min: today, value: tomorrow })),
+      h('label', { class: 'f' }, 'Час', (f.time = h('select', { class: 'in' }, ...['Протягом дня', '10:00–13:00', '13:00–16:00', '16:00–19:00', 'Точний час (напишу в коментарі)'].map(t => h('option', { value: t }, t)))))),
+    h('label', { class: 'f' }, 'Текст листівки (необов’язково)', (f.card = h('textarea', { class: 'in', maxlength: 300, placeholder: 'Ваше побажання одержувачу' }))),
+    h('label', { class: 'f' }, 'Коментар до замовлення', (f.comment = h('textarea', { class: 'in', maxlength: 500, placeholder: 'Колір стрічки, побажання до складу…' }))),
+    h('h3', { style: 'margin:14px 0 8px' }, 'Оплата'),
+    h('label', { class: 'opt' }, h('input', { type: 'radio', name: 'pm', value: 'on_receipt', checked: checkout.payment === 'on_receipt', onchange: () => { checkout.payment = 'on_receipt'; } }), h('span', null, h('b', null, 'При отриманні'), h('small', null, 'Готівкою або карткою'))),
+    h('label', { class: 'opt' }, h('input', { type: 'radio', name: 'pm', value: 'transfer', checked: checkout.payment === 'transfer', onchange: () => { checkout.payment = 'transfer'; } }), h('span', null, h('b', null, 'Переказ на картку'), h('small', null, 'Реквізити надішлемо після підтвердження'))),
+    alc ? h('label', { class: 'opt', style: 'border-color:#f0cf8a;background:#fffaf0' }, alcCheck, h('span', null, h('b', null, '🔞 Мені виповнилося 18 років'), h('small', null, 'Замовлення містить алкоголь. Під час отримання потрібен документ.'))) : null,
+    totals, err);
+  drawTotals();
+  const send = h('button', { class: 'btn primary', style: 'width:100%', type: 'button' }, 'Підтвердити замовлення');
+  foot.replaceChildren(send);
+  send.addEventListener('click', async () => {
+    err.textContent = '';
+    const name = f.name.value.trim(); const phone = f.phone.value.trim();
+    if (name.length < 2) { err.textContent = 'Вкажіть ім’я'; return; }
+    if (phone.replace(/\D/g, '').length < 9) { err.textContent = 'Вкажіть правильний номер телефону'; return; }
+    if (checkout.delivery !== 'pickup' && (!f.address.value.trim() || !f.city.value.trim())) { err.textContent = 'Вкажіть місто й адресу доставки'; return; }
+    if (alc && !checkout.age) { err.textContent = 'Підтвердіть, що вам виповнилося 18 років'; return; }
+    send.disabled = true; send.textContent = 'Відправляємо…';
+    try {
+      const res = await placeOrder({ name, phone, email: f.email.value.trim(), delivery: checkout.delivery, city: f.city ? f.city.value.trim() : '', address: f.address ? f.address.value.trim() : '',
+        date: f.date.value || null, time: f.time.value, card: f.card.value.trim(), comment: f.comment.value.trim(), payment: checkout.payment, age: alc ? checkout.age : false });
+      S.cart = []; saveCart(); renderCartBadge(); showDone(res, phone);
+    } catch (e) {
+      err.textContent = e.message || 'Не вдалося оформити замовлення. Спробуйте ще раз';
+      send.disabled = false; send.textContent = 'Підтвердити замовлення';
+    }
+  });
+}
+
+async function placeOrder(o) {
+  const items = S.cart.map(l => l.kind === 'custom' ? { kind: 'custom', qty: l.qty, components: l.comps.map(c => ({ id: c.id, qty: c.qty })) } : { kind: l.kind, id: l.id, qty: l.qty });
+  if (DEMO) {
+    const sub = cartSub(); const fee = deliveryFee(o.delivery, sub);
+    return { code: 'DEMO' + Math.random().toString(36).slice(2, 6).toUpperCase(), subtotal: sub, delivery_fee: fee, total: sub + fee, demo: true };
+  }
+  const { data, error } = await db.rpc('create_order', {
+    p_name: o.name, p_phone: o.phone, p_email: o.email || null, p_delivery: o.delivery, p_city: o.city || null, p_address: o.address || null,
+    p_date: o.date, p_time: o.time, p_card: o.card || null, p_comment: o.comment || null, p_payment: o.payment, p_age_ok: o.age, p_items: items
+  });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+function showDone(res, phone) {
+  S.view = 'done';
+  $('#dTitle').textContent = 'Дякуємо!';
+  $('#dBody').replaceChildren(h('div', { class: 'done-box' },
+    h('div', { style: 'font-size:56px' }, '🎉'), h('h3', null, 'Замовлення прийнято'),
+    h('p', null, 'Ми зв’яжемось з вами за номером ' + phone + ', щоб підтвердити склад і час.'),
+    h('div', { class: 'code' }, res.code),
+    h('p', { style: 'color:var(--muted);font-size:14px' }, 'Збережіть код: за ним і телефоном можна дізнатися статус замовлення.'),
+    h('p', null, h('b', null, 'Сума: ' + money(res.total)) , res.delivery_fee ? ' (разом з доставкою ' + money(res.delivery_fee) + ')' : ''),
+    res.demo ? h('p', { class: 'err' }, 'Демо-режим: замовлення не збережено, бо немає підключення до бази.') : null,
+    h('div', { style: 'display:flex;gap:8px;justify-content:center;flex-wrap:wrap' },
+      h('button', { class: 'btn', type: 'button', onclick: () => { navigator.clipboard && navigator.clipboard.writeText(res.code); toast('Код скопійовано'); } }, 'Скопіювати код'),
+      h('button', { class: 'btn primary', type: 'button', onclick: () => { closeCart(); document.getElementById('track').scrollIntoView({ behavior: 'smooth' }); $('#trCode').value = res.code; $('#trPhone').value = phone; } }, 'Перейти до відстеження'))));
+  $('#dFoot').replaceChildren();
+}
+
+/* ======================= ВІДСТЕЖЕННЯ ======================= */
+$('#trGo').addEventListener('click', async () => {
+  const code = $('#trCode').value.trim(); const phone = $('#trPhone').value.trim();
+  $('#trErr').textContent = ''; $('#trResult').replaceChildren();
+  if (!code || phone.replace(/\D/g, '').length < 9) { $('#trErr').textContent = 'Вкажіть код замовлення та телефон'; return; }
+  if (DEMO) { $('#trErr').textContent = 'Демо-режим: відстеження працює після підключення бази'; return; }
+  const { data, error } = await db.rpc('track_order', { p_code: code, p_phone: phone });
+  if (error) { $('#trErr').textContent = error.message; return; }
+  if (!data) { $('#trErr').textContent = 'Замовлення не знайдено. Перевірте код і телефон'; return; }
+  const idx = STATUS.findIndex(s => s[0] === data.status);
+  const line = data.status === 'cancelled' ? [h('span', { class: 'st cur', style: 'background:var(--danger)' }, 'Скасовано')]
+    : STATUS.slice(0, 5).map((s, i) => h('span', { class: 'st' + (i < idx ? ' done' : i === idx ? ' cur' : '') }, s[1]));
+  $('#trResult').replaceChildren(h('div', { class: 'panel', style: 'max-width:760px;margin-top:14px' },
+    h('h3', null, 'Замовлення ' + data.code), h('div', { class: 'timeline' }, ...line),
+    h('p', { class: 'sub', style: 'color:var(--muted)' }, 'Створено: ' + new Date(data.created_at).toLocaleString('uk-UA') + (data.delivery_date ? ' · дата: ' + new Date(data.delivery_date).toLocaleDateString('uk-UA') : '')),
+    h('ul', { class: 'sum-list' }, (data.items || []).map(i => h('li', null, h('span', null, i.name + ' × ' + i.qty), h('span', null, money(i.price * i.qty))))),
+    h('div', { class: 'sum-total' }, h('span', null, 'Разом'), h('span', null, money(data.total)))));
+});
+
+/* ======================= СТАРТ ======================= */
+(async function init() {
+  try {
+    await loadAll();
+  } catch (e) {
+    document.getElementById('catalog').querySelector('.wrap').append(h('p', { class: 'err' }, 'Не вдалося завантажити каталог: ' + (e.message || e)));
+    return;
+  }
+  renderShell(); renderCatalog(); renderBuilder(); renderCartBadge();
+})();
+</script>
+</body>
+</html>

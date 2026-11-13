@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Адмінка магазину</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8D%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root { --bg: #f6f3f2; --panel: #fff; --ink: #26242d; --muted: #77737f; --line: #e8e1df; --pink: #e5487f; --mint: #2f8f78; --warn: #d98a00; --danger: #d63b3b; --r: 14px; --shadow: 0 2px 10px rgba(60, 30, 40, .07); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.hidden { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+.btn:hover { filter: brightness(.97); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.primary { background: var(--pink); border-color: var(--pink); color: #fff; }
+.btn.ok { background: var(--mint); border-color: var(--mint); color: #fff; }
+.btn.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn.small { padding: 4px 10px; font-size: 13px; border-radius: 8px; }
+.in { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.in:focus { outline: none; border-color: var(--pink); }
+textarea.in { resize: vertical; min-height: 70px; }
+label.f { display: grid; gap: 4px; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+.err { color: var(--danger); font-size: 14px; min-height: 20px; }
+.okc { color: var(--mint); }
+.sub { color: var(--muted); font-size: 13px; }
+
+#login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.lcard { width: 100%; max-width: 380px; background: #fff; border-radius: 18px; padding: 28px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+.lcard h1 { margin: 0 0 6px; font-size: 22px; } .lcard .in { margin-bottom: 10px; }
+
+#app { display: flex; min-height: 100vh; }
+#side { width: 220px; flex: none; background: #fff; border-right: 1px solid var(--line); padding: 16px 10px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 4px; }
+#side h2 { margin: 0 8px 12px; font-size: 18px; }
+#side a { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 10px; color: var(--ink); text-decoration: none; }
+#side a:hover { background: #fdeaf1; } #side a.active { background: var(--pink); color: #fff; }
+.nb { margin-left: auto; background: var(--danger); color: #fff; border-radius: 10px; min-width: 20px; padding: 0 6px; font-size: 12px; text-align: center; }
+#content { flex: 1; min-width: 0; }
+#top { display: flex; align-items: center; gap: 12px; padding: 14px 24px; background: #fff; border-bottom: 1px solid var(--line); }
+#top h1 { margin: 0; font-size: 20px; flex: 1; }
+#main { padding: 22px 24px 60px; max-width: 1200px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.stat { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); }
+.stat b { display: block; font-size: 26px; } .stat span { color: var(--muted); font-size: 13px; }
+.panel { background: #fff; border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); margin-bottom: 18px; overflow: hidden; }
+.panel > h3 { margin: 0; padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: 15px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pad { padding: 16px; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+.toolbar .in { max-width: 260px; }
+.tab { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+.tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.row { display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.row:last-child { border-bottom: none; }
+.row .grow { flex: 1; min-width: 180px; }
+.row.dim { opacity: .55; }
+.chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #eee; }
+.chip.new { background: #ffe3ec; color: #b3225a; } .chip.confirmed { background: #e3efff; color: #1b5ec2; } .chip.assembling { background: #fff1d6; color: #9a6400; }
+.chip.ready { background: #e0f4ec; color: #1d6b58; } .chip.delivered { background: #d8f0d4; color: #256b1f; } .chip.cancelled { background: #eee; color: #777; }
+.chip.alc { background: #fff1d6; color: #9a6400; }
+.thumb { width: 54px; height: 54px; border-radius: 10px; object-fit: cover; background: #f1ebe9; flex: none; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+table.t { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.t th { text-align: left; color: var(--muted); font-weight: 600; padding: 6px 8px; }
+table.t td { padding: 6px 8px; border-top: 1px solid var(--line); vertical-align: top; }
+
+.dlg { position: fixed; inset: 0; background: rgba(30, 20, 30, .5); z-index: 50; display: flex; align-items: flex-start; justify-content: center; padding: 28px 14px; overflow-y: auto; }
+.dbox { width: 100%; max-width: 640px; background: #fff; border-radius: 18px; padding: 22px; box-shadow: var(--shadow); }
+.dbox h3 { margin: 0 0 12px; font-size: 20px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.acts { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+.comp { display: grid; grid-template-columns: 1fr 90px 36px; gap: 8px; margin-bottom: 6px; }
+#toasts { position: fixed; right: 16px; bottom: 16px; display: grid; gap: 8px; z-index: 70; }
+.toast { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--mint); padding: 10px 14px; border-radius: 10px; box-shadow: var(--shadow); max-width: 340px; }
+.toast.bad { border-left-color: var(--danger); }
+@media (max-width: 860px) {
+  #app { flex-direction: column; }
+  #side { width: 100%; height: auto; position: static; flex-direction: row; overflow-x: auto; align-items: center; }
+  #side h2 { display: none; }
+  .two { grid-template-columns: 1fr; } #main { padding: 14px; }
+}
+@media print { #side, #top, .noprint, #toasts { display: none !important; } .dlg { position: static; background: none; padding: 0; } .dbox { box-shadow: none; max-width: none; } #app > #content { margin: 0; } }
+</style>
+</head>
+<body>
+
+<div id="login" class="hidden">
+  <form class="lcard" id="loginForm">
+    <h1>🛍️ Адмінка магазину</h1>
+    <p class="sub" style="margin:0 0 14px">Вхід для власника магазину.</p>
+    <input class="in" id="lgEmail" type="email" placeholder="Email" autocomplete="username" required>
+    <input class="in" id="lgPass" type="password" placeholder="Пароль" autocomplete="current-password" required>
+    <div class="err" id="lgErr"></div>
+    <button class="btn primary" id="lgBtn" type="submit" style="width:100%;justify-content:center">Увійти</button>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+  <nav id="side">
+    <h2>🛍️ Магазин</h2>
+    <a href="#orders" data-page="orders">📦 Замовлення <span class="nb hidden" id="nbOrders"></span></a>
+    <a href="#products" data-page="products">🍬 Товари</a>
+    <a href="#bouquets" data-page="bouquets">💐 Готові букети</a>
+    <a href="#settings" data-page="settings">⚙️ Налаштування</a>
+    <div style="flex:1"></div>
+    <a href="index.html" target="_blank" rel="noopener">🌐 Відкрити сайт</a>
+  </nav>
+  <div id="content">
+    <header id="top"><h1 id="pageTitle"></h1><span class="sub" id="meEmail"></span><button class="btn small" id="logoutBtn" type="button">Вийти</button></header>
+    <main id="main"></main>
+  </div>
+</div>
+
+<div id="dlg" class="dlg hidden"><div class="dbox" id="dbox"></div></div>
+<div id="toasts"></div>
+
+<script>
+/* ======================= НАЛАШТУВАННЯ ======================= */
+const SUPABASE_URL = '';   // ← той самий Project URL, що й у index.html
+const SUPABASE_KEY = '';   // ← той самий publishable (anon) ключ
+
+const db = supabase.createClient(SUPABASE_URL || 'https://example.supabase.co', SUPABASE_KEY || 'x');
+const $ = id => document.getElementById(id);
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v; else if (k === 'text') e.textContent = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, ''); else e.setAttribute(k, v);
+  }
+  kids.flat(Infinity).forEach(c => { if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(String(c))); });
+  return e;
+}
+const money = n => Number(n || 0).toLocaleString('uk-UA', { minimumFractionDigits: Number(n) % 1 ? 2 : 0, maximumFractionDigits: 2 }) + ' ₴';
+const fmt = s => (s ? new Date(s).toLocaleString('uk-UA', { dateStyle: 'short', timeStyle: 'short' }) : '—');
+const STATUS = { new: 'Нове', confirmed: 'Підтверджено', assembling: 'Збираємо', ready: 'Готове', delivered: 'Видано', cancelled: 'Скасовано' };
+const DELIVERY = { pickup: 'Самовивіз', courier: 'Кур’єр', post: 'Нова пошта' };
+const PAYMENT = { on_receipt: 'При отриманні', transfer: 'Переказ на картку' };
+function toast(msg, bad) { const t = el('div', { class: 'toast' + (bad ? ' bad' : '') }, msg); $('toasts').append(t); setTimeout(() => t.remove(), bad ? 6000 : 2800); }
+
+function openDlg(...nodes) { $('dbox').replaceChildren(...nodes.flat().filter(Boolean)); $('dlg').classList.remove('hidden'); }
+function closeDlg() { $('dlg').classList.add('hidden'); }
+$('dlg').addEventListener('mousedown', e => { if (e.target === $('dlg')) closeDlg(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDlg(); });
+function confirmDlg(title, text, ok) {
+  return new Promise(res => {
+    openDlg(el('h3', null, title), el('p', null, text), el('div', { class: 'acts' },
+      el('button', { class: 'btn', onclick: () => { closeDlg(); res(false); } }, 'Скасувати'),
+      el('button', { class: 'btn danger', onclick: () => { closeDlg(); res(true); } }, ok || 'Підтвердити')));
+  });
+}
+
+/* ======================= ВХІД ======================= */
+let me = null;
+async function enter(session) {
+  if (!session) { $('app').classList.add('hidden'); $('login').classList.remove('hidden'); return; }
+  const { data } = await db.from('shop_admins').select('user_id').maybeSingle();
+  if (!data) {
+    await db.auth.signOut();
+    $('lgErr').textContent = 'Цей акаунт не має доступу до адмінки';
+    $('app').classList.add('hidden'); $('login').classList.remove('hidden'); return;
+  }
+  me = session.user;
+  $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  $('meEmail').textContent = me.email || '';
+  route(); poll(false);
+}
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault(); $('lgErr').textContent = ''; $('lgBtn').disabled = true;
+  const { data, error } = await db.auth.signInWithPassword({ email: $('lgEmail').value.trim(), password: $('lgPass').value });
+  $('lgBtn').disabled = false;
+  if (error) { $('lgErr').textContent = /invalid/i.test(error.message) ? 'Невірна пошта або пароль' : error.message; return; }
+  await enter(data.session);
+});
+$('logoutBtn').addEventListener('click', async () => { await db.auth.signOut(); me = null; await enter(null); });
+
+/* ======================= НАВІГАЦІЯ ======================= */
+const PAGES = { orders: ['Замовлення', pgOrders], products: ['Товари', pgProducts], bouquets: ['Готові букети', pgBouquets], settings: ['Налаштування', pgSettings] };
+let tok = 0;
+function route() {
+  if (!me) return;
+  const id = PAGES[location.hash.slice(1)] ? location.hash.slice(1) : 'orders';
+  document.querySelectorAll('#side a[data-page]').forEach(a => a.classList.toggle('active', a.dataset.page === id));
+  $('pageTitle').textContent = PAGES[id][0];
+  $('main').replaceChildren(el('p', { class: 'sub' }, 'Завантаження…'));
+  PAGES[id][1](++tok);
+}
+window.addEventListener('hashchange', route);
+const stale = t => t !== tok;
+const show = (...n) => $('main').replaceChildren(...n.flat().filter(Boolean));
+
+let lastNew = null;
+async function poll(announce) {
+  const { count } = await db.from('shop_orders').select('*', { count: 'exact', head: true }).eq('status', 'new');
+  const n = count || 0;
+  $('nbOrders').textContent = n || ''; $('nbOrders').classList.toggle('hidden', !n);
+  document.title = (n ? '(' + n + ') ' : '') + 'Адмінка магазину';
+  if (announce && lastNew != null && n > lastNew) toast('📦 Нових замовлень: ' + (n - lastNew));
+  lastNew = n;
+}
+setInterval(() => { if (me && !document.hidden) poll(true); }, 40000);
+
+/* ======================= ЗАМОВЛЕННЯ ======================= */
+const ordState = { tab: 'new', q: '' };
+const ORD_TABS = [['new', 'Нові', ['new']], ['work', 'У роботі', ['confirmed', 'assembling', 'ready']], ['done', 'Виконані', ['delivered']], ['cancel', 'Скасовані', ['cancelled']], ['all', 'Усі', null]];
+
+async function pgOrders(t) {
+  const tabDef = ORD_TABS.find(x => x[0] === ordState.tab);
+  let q = db.from('shop_orders').select('*, shop_order_items(*)').order('created_at', { ascending: false }).limit(200);
+  if (tabDef[2]) q = q.in('status', tabDef[2]);
+  const since = new Date(Date.now() - 30 * 864e5).toISOString();
+  const [res, cNew, cWork, done] = await Promise.all([
+    q,
+    db.from('shop_orders').select('*', { count: 'exact', head: true }).eq('status', 'new'),
+    db.from('shop_orders').select('*', { count: 'exact', head: true }).in('status', ['confirmed', 'assembling', 'ready']),
+    db.from('shop_orders').select('total').eq('status', 'delivered').gte('created_at', since).limit(1000)
+  ]);
+  if (stale(t)) return;
+  const revenue = (done.data || []).reduce((a, o) => a + Number(o.total), 0);
+  const today = new Date().toDateString();
+  const todayCount = (res.data || []).filter(o => new Date(o.created_at).toDateString() === today).length;
+  const f = ordState.q.toLowerCase();
+  const list = (res.data || []).filter(o => !f || [o.code, o.phone, o.customer_name].some(v => String(v || '').toLowerCase().includes(f)));
+  const search = el('input', { class: 'in', placeholder: 'Пошук: код, телефон, ім’я', value: ordState.q });
+  search.addEventListener('input', () => { ordState.q = search.value.trim(); clearTimeout(search._t); search._t = setTimeout(() => pgOrders(++tok), 300); });
+  show(
+    el('div', { class: 'cards' }, stat(cNew.count || 0, 'Нових'), stat(cWork.count || 0, 'У роботі'), stat(todayCount, 'Сьогодні (у списку)'), stat(money(revenue), 'Виручка 30 днів (видані)')),
+    el('div', { class: 'toolbar' }, ...ORD_TABS.map(x => el('button', { class: 'tab' + (ordState.tab === x[0] ? ' active' : ''), onclick: () => { ordState.tab = x[0]; pgOrders(++tok); } }, x[1])), search),
+    el('div', { class: 'panel' }, res.error ? el('div', { class: 'pad err' }, res.error.message) : list.length ? list.map(orderRow) : el('div', { class: 'pad sub' }, 'Замовлень немає')));
+}
+const stat = (v, l) => el('div', { class: 'stat' }, el('b', null, v), el('span', null, l));
+
+function orderRow(o) {
+  return el('div', { class: 'row' + (o.status === 'cancelled' ? ' dim' : '') },
+    el('div', { class: 'grow' },
+      el('div', null, el('b', null, '#' + o.code), ' ', el('span', { class: 'chip ' + o.status }, STATUS[o.status]), o.has_alcohol ? el('span', { class: 'chip alc', style: 'margin-left:6px' }, '18+') : null),
+      el('div', { class: 'sub' }, o.customer_name + ' · ' + o.phone + ' · ' + fmt(o.created_at))),
+    el('div', { class: 'sub' }, DELIVERY[o.delivery_method] + (o.delivery_date ? ' · ' + new Date(o.delivery_date).toLocaleDateString('uk-UA') : '') + (o.delivery_time ? ' · ' + o.delivery_time : '')),
+    el('b', null, money(o.total)),
+    el('button', { class: 'btn small', onclick: () => orderDlg(o) }, 'Деталі'));
+}
+
+function orderDlg(o) {
+  const items = (o.shop_order_items || []);
+  const note = el('textarea', { class: 'in', placeholder: 'Внутрішня нотатка (клієнт її не бачить)' }); note.value = o.admin_note || '';
+  const err = el('div', { class: 'err' });
+  async function setStatus(st) {
+    if (st === 'cancelled' && !(await confirmDlg('Скасувати замовлення?', 'Товар повернеться на склад. Відновити замовлення буде неможливо.', 'Скасувати замовлення'))) { orderDlg(o); return; }
+    const { error } = await db.rpc('set_order_status', { p_id: o.id, p_status: st });
+    if (error) { toast(error.message, true); return; }
+    toast('Статус: ' + STATUS[st]); closeDlg(); poll(false); pgOrders(++tok);
+  }
+  const flow = ['new', 'confirmed', 'assembling', 'ready', 'delivered'];
+  const next = flow[flow.indexOf(o.status) + 1];
+  openDlg(
+    el('h3', null, 'Замовлення #' + o.code, ' ', el('span', { class: 'chip ' + o.status }, STATUS[o.status]), o.has_alcohol ? el('span', { class: 'chip alc', style: 'margin-left:6px' }, '18+ підтверджено клієнтом') : null),
+    el('div', { class: 'two' },
+      info('Клієнт', o.customer_name), info('Телефон', el('a', { href: 'tel:' + o.phone }, o.phone)),
+      info('Email', o.email), info('Створено', fmt(o.created_at)),
+      info('Отримання', DELIVERY[o.delivery_method]), info('Дата й час', (o.delivery_date ? new Date(o.delivery_date).toLocaleDateString('uk-UA') : '—') + (o.delivery_time ? ', ' + o.delivery_time : '')),
+      info('Місто', o.city), info('Адреса', o.address), info('Оплата', PAYMENT[o.payment_method])),
+    el('h4', { style: 'margin:14px 0 6px' }, 'Склад'),
+    el('table', { class: 't' }, el('thead', null, el('tr', null, ...['Позиція', 'К-сть', 'Ціна', 'Сума'].map(x => el('th', null, x)))),
+      el('tbody', null, ...items.map(i => el('tr', null,
+        el('td', null, el('b', null, i.name), Array.isArray(i.details) && i.details.length ? el('div', { class: 'sub' }, i.details.map(d => d.name + ' × ' + d.qty).join(', ')) : null),
+        el('td', null, i.qty), el('td', null, money(i.unit_price)), el('td', null, money(i.unit_price * i.qty)))),
+        el('tr', null, el('td', { colspan: 3 }, 'Доставка'), el('td', null, money(o.delivery_fee))),
+        el('tr', null, el('td', { colspan: 3 }, el('b', null, 'Разом')), el('td', null, el('b', null, money(o.total)))))),
+    o.card_text ? el('p', null, el('b', null, 'Текст листівки: '), o.card_text) : null,
+    o.comment ? el('p', null, el('b', null, 'Коментар: '), o.comment) : null,
+    el('label', { class: 'f noprint', style: 'margin-top:10px' }, 'Нотатка', note), err,
+    el('div', { class: 'acts noprint' },
+      el('button', { class: 'btn', onclick: () => window.print() }, '🖨 Друк'),
+      o.status !== 'cancelled' && o.status !== 'delivered' ? el('button', { class: 'btn danger', onclick: () => setStatus('cancelled') }, 'Скасувати') : null,
+      el('button', { class: 'btn', onclick: async () => {
+        const { error } = await db.from('shop_orders').update({ admin_note: note.value.trim() || null }).eq('id', o.id);
+        if (error) { err.textContent = error.message; return; } toast('Нотатку збережено'); o.admin_note = note.value.trim(); } }, 'Зберегти нотатку'),
+      next ? el('button', { class: 'btn ok', onclick: () => setStatus(next) }, '→ ' + STATUS[next]) : null,
+      el('button', { class: 'btn', onclick: closeDlg }, 'Закрити')));
+}
+const info = (l, v) => el('div', null, el('div', { class: 'sub' }, l), el('div', null, v || '—'));
+
+/* ======================= ЗАВАНТАЖЕННЯ ФОТО ======================= */
+async function uploadImage(file, folder) {
+  const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  const scale = Math.min(1, 900 / Math.max(bmp.width, bmp.height));
+  const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * scale); cv.height = Math.round(bmp.height * scale);
+  const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(bmp, 0, 0, cv.width, cv.height);
+  const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.85));
+  const path = folder + '/' + Date.now() + '_' + Math.random().toString(36).slice(2, 8) + '.jpg';
+  const up = await db.storage.from('shop').upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
+  if (up.error) throw up.error;
+  return db.storage.from('shop').getPublicUrl(path).data.publicUrl;
+}
+function imageField(obj, folder) {
+  const prev = el('div', { class: 'thumb' }, obj.image_url ? el('img', { src: obj.image_url, style: 'width:100%;height:100%;object-fit:cover;border-radius:10px', alt: '' }) : '🖼️');
+  const file = el('input', { type: 'file', accept: 'image/jpeg,image/png,image/webp' });
+  const msg = el('span', { class: 'sub' });
+  file.addEventListener('change', async () => {
+    if (!file.files[0]) return; msg.textContent = 'Завантажую…';
+    try { obj.image_url = await uploadImage(file.files[0], folder); prev.replaceChildren(el('img', { src: obj.image_url, style: 'width:100%;height:100%;object-fit:cover;border-radius:10px', alt: '' })); msg.textContent = 'Готово'; }
+    catch (e) { msg.textContent = e.message || String(e); }
+  });
+  return el('div', { style: 'display:flex;gap:12px;align-items:center;margin-bottom:10px' }, prev, el('div', null, file, el('div', null, msg,
+    obj.image_url ? el('button', { class: 'btn small', type: 'button', style: 'margin-left:8px', onclick: () => { obj.image_url = null; prev.replaceChildren('🖼️'); } }, 'Прибрати фото') : null)));
+}
+
+/* ======================= ТОВАРИ ======================= */
+async function pgProducts(t) {
+  const [cats, prods] = await Promise.all([db.from('shop_categories').select('*').order('sort'), db.from('shop_products').select('*').order('sort')]);
+  if (stale(t)) return;
+  const C = cats.data || []; const P = prods.data || [];
+  const groups = C.map(c => [c, P.filter(p => p.category_id === c.id)]);
+  const rest = P.filter(p => !C.some(c => c.id === p.category_id));
+  if (rest.length) groups.push([{ name: 'Без категорії', emoji: '❔' }, rest]);
+  show(el('div', { class: 'toolbar' }, el('button', { class: 'btn primary', onclick: () => productDlg(null, C) }, '＋ Додати товар')),
+    prods.error ? el('div', { class: 'err' }, prods.error.message) : null,
+    ...groups.map(([c, list]) => el('div', { class: 'panel' }, el('h3', null, c.emoji + ' ' + c.name + ' ', el('span', { class: 'sub' }, list.length + ' шт')),
+      list.length ? list.map(p => el('div', { class: 'row' + (p.active ? '' : ' dim') },
+        el('div', { class: 'thumb' }, p.image_url ? el('img', { src: p.image_url, style: 'width:100%;height:100%;object-fit:cover;border-radius:10px', alt: '' }) : c.emoji),
+        el('div', { class: 'grow' }, el('b', null, p.name), p.is_alcohol ? el('span', { class: 'chip alc', style: 'margin-left:6px' }, '18+') : null,
+          el('div', { class: 'sub' }, [p.volume, p.abv != null ? p.abv + '%' : null, p.description].filter(Boolean).join(' · '))),
+        el('b', null, money(p.price) + ' / ' + p.unit),
+        el('span', { class: 'sub' }, p.stock == null ? 'залишок ∞' : 'залишок ' + p.stock),
+        el('button', { class: 'btn small', onclick: () => productDlg(p, C) }, 'Змінити')) ) : el('div', { class: 'pad sub' }, 'Порожньо'))));
+}
+
+function productDlg(p, cats) {
+  const o = Object.assign({ name: '', description: '', price: '', unit: 'шт', stock: null, is_alcohol: false, volume: '', abv: null, active: true, sort: 0, image_url: null, category_id: cats[0] ? cats[0].id : null }, p || {});
+  const f = {};
+  const inp = (k, props) => (f[k] = el('input', Object.assign({ class: 'in' }, props)));
+  const err = el('div', { class: 'err' });
+  const cat = (f.cat = el('select', { class: 'in' }, ...cats.map(c => el('option', { value: c.id, selected: c.id === o.category_id }, c.emoji + ' ' + c.name))));
+  const alc = el('input', { type: 'checkbox', checked: o.is_alcohol }); const act = el('input', { type: 'checkbox', checked: o.active });
+  const desc = el('textarea', { class: 'in' }); desc.value = o.description || '';
+  openDlg(el('h3', null, p ? 'Товар: ' + p.name : 'Новий товар'),
+    imageField(o, 'products'),
+    el('label', { class: 'f' }, 'Назва', inp('name', { value: o.name, maxlength: 80 })),
+    el('div', { class: 'two' }, el('label', { class: 'f' }, 'Категорія', cat), el('label', { class: 'f' }, 'Ціна, ₴', inp('price', { type: 'number', min: 0, step: '0.01', value: o.price }))),
+    el('div', { class: 'two' }, el('label', { class: 'f' }, 'Одиниця', inp('unit', { value: o.unit })), el('label', { class: 'f' }, 'Залишок (порожньо = без обмежень)', inp('stock', { type: 'number', min: 0, value: o.stock == null ? '' : o.stock }))),
+    el('label', { class: 'f' }, 'Опис', desc),
+    el('label', { style: 'display:flex;gap:8px;margin-bottom:8px' }, alc, 'Алкогольний виріб (18+)'),
+    el('div', { class: 'two' }, el('label', { class: 'f' }, 'Обʼєм (напр. 50 мл)', inp('volume', { value: o.volume || '' })), el('label', { class: 'f' }, 'Міцність, %', inp('abv', { type: 'number', min: 0, max: 100, step: '0.1', value: o.abv == null ? '' : o.abv }))),
+    el('div', { class: 'two' }, el('label', { class: 'f' }, 'Порядок у списку', inp('sort', { type: 'number', value: o.sort })), el('label', { style: 'display:flex;gap:8px;align-items:center;margin-top:22px' }, act, 'Показувати на сайті')),
+    err,
+    el('div', { class: 'acts' },
+      p ? el('button', { class: 'btn danger', style: 'margin-right:auto', onclick: async () => {
+        if (!(await confirmDlg('Видалити товар?', 'Якщо він використовується в готових букетах, видалення не вийде. Тоді вимкніть показ на сайті.', 'Видалити'))) { productDlg(p, cats); return; }
+        const { error } = await db.from('shop_products').delete().eq('id', p.id);
+        if (error) { toast(/foreign|violates/i.test(error.message) ? 'Товар використовується в букетах: вимкніть показ замість видалення' : error.message, true); return; }
+        closeDlg(); toast('Видалено'); pgProducts(++tok); } }, 'Видалити') : null,
+      el('button', { class: 'btn', onclick: closeDlg }, 'Скасувати'),
+      el('button', { class: 'btn primary', onclick: async () => {
+        const name = f.name.value.trim(); const price = Number(f.price.value);
+        if (!name) { err.textContent = 'Вкажіть назву'; return; }
+        if (!(price >= 0) || f.price.value === '') { err.textContent = 'Вкажіть ціну'; return; }
+        const row = { name, category_id: cat.value || null, price, unit: f.unit.value.trim() || 'шт', stock: f.stock.value === '' ? null : Math.max(0, parseInt(f.stock.value, 10)),
+          description: desc.value.trim() || null, is_alcohol: alc.checked, volume: f.volume.value.trim() || null, abv: f.abv.value === '' ? null : Number(f.abv.value),
+          sort: parseInt(f.sort.value, 10) || 0, active: act.checked, image_url: o.image_url };
+        const { error } = p ? await db.from('shop_products').update(row).eq('id', p.id) : await db.from('shop_products').insert(row);
+        if (error) { err.textContent = error.message; return; }
+        closeDlg(); toast('Збережено'); pgProducts(++tok); } }, 'Зберегти')));
+}
+
+/* ======================= ГОТОВІ БУКЕТИ ======================= */
+const TAGS = [['soap', '🧼 Мильні'], ['candy', '🍬 Солодкі'], ['alcohol', '🥂 Алкогольні'], ['mixed', '💐 Мікс']];
+async function pgBouquets(t) {
+  const [bq, pr, st] = await Promise.all([
+    db.from('shop_bouquets').select('*, shop_bouquet_items(product_id, qty)').order('sort'),
+    db.from('shop_products').select('*').order('sort'),
+    db.from('shop_settings').select('*').eq('key', 'prices').maybeSingle()
+  ]);
+  if (stale(t)) return;
+  const P = pr.data || []; const byId = Object.fromEntries(P.map(p => [p.id, p]));
+  const fee = (st.data && st.data.value && Number(st.data.value.assembly_fee)) || 0;
+  show(el('div', { class: 'toolbar' }, el('button', { class: 'btn primary', onclick: () => bouquetDlg(null, P, fee) }, '＋ Додати букет')),
+    bq.error ? el('div', { class: 'err' }, bq.error.message) : null,
+    el('div', { class: 'panel' }, (bq.data || []).length ? bq.data.map(b => el('div', { class: 'row' + (b.active ? '' : ' dim') },
+      el('div', { class: 'thumb' }, b.image_url ? el('img', { src: b.image_url, style: 'width:100%;height:100%;object-fit:cover;border-radius:10px', alt: '' }) : '💐'),
+      el('div', { class: 'grow' }, el('b', null, b.name), el('div', { class: 'sub' }, (b.shop_bouquet_items || []).map(i => (byId[i.product_id] ? byId[i.product_id].name : '—') + ' ×' + i.qty).join(', '))),
+      el('b', null, money(b.price)), el('button', { class: 'btn small', onclick: () => bouquetDlg(b, P, fee) }, 'Змінити'))) : el('div', { class: 'pad sub' }, 'Букетів ще немає')));
+}
+
+function bouquetDlg(b, products, fee) {
+  const o = Object.assign({ name: '', description: '', price: '', tags: [], active: true, sort: 0, image_url: null }, b || {});
+  let items = (b ? b.shop_bouquet_items : []).map(i => ({ product_id: i.product_id, qty: i.qty }));
+  const err = el('div', { class: 'err' });
+  const name = el('input', { class: 'in', value: o.name, maxlength: 80 });
+  const desc = el('textarea', { class: 'in' }); desc.value = o.description || '';
+  const price = el('input', { class: 'in', type: 'number', min: 0, step: '0.01', value: o.price });
+  const sort = el('input', { class: 'in', type: 'number', value: o.sort });
+  const act = el('input', { type: 'checkbox', checked: o.active });
+  const tagBoxes = TAGS.map(([k, l]) => { const c = el('input', { type: 'checkbox', checked: (o.tags || []).includes(k) }); return [k, c, el('label', { style: 'display:inline-flex;gap:4px;margin-right:12px' }, c, l)]; });
+  const compBox = el('div'); const hint = el('div', { class: 'sub' });
+  const pickItems = () => items.reduce((a, i) => a + (Number(((products.find(p => p.id === i.product_id)) || {}).price) || 0) * i.qty, 0);
+  const draw = () => {
+    compBox.replaceChildren(...items.map((it, idx) => {
+      const sel = el('select', { class: 'in' }, ...products.map(p => el('option', { value: p.id, selected: p.id === it.product_id }, p.name + ' (' + money(p.price) + ')')));
+      sel.addEventListener('change', () => { it.product_id = sel.value; draw(); });
+      const q = el('input', { class: 'in', type: 'number', min: 1, value: it.qty }); q.addEventListener('input', () => { it.qty = Math.max(1, parseInt(q.value, 10) || 1); hintDraw(); });
+      return el('div', { class: 'comp' }, sel, q, el('button', { class: 'btn small', type: 'button', onclick: () => { items.splice(idx, 1); draw(); } }, '✕'));
+    }));
+    hintDraw();
+  };
+  const hintDraw = () => { hint.textContent = 'Сума складу: ' + money(pickItems()) + ' + збірка ' + money(fee) + ' = ' + money(pickItems() + fee) + ' (рекомендована ціна)'; };
+  draw();
+  openDlg(el('h3', null, b ? 'Букет: ' + b.name : 'Новий букет'), imageField(o, 'bouquets'),
+    el('label', { class: 'f' }, 'Назва', name), el('label', { class: 'f' }, 'Опис', desc),
+    el('div', { class: 'f' }, 'Категорії', el('div', null, tagBoxes.map(x => x[2]))),
+    el('div', { class: 'f' }, 'Склад', compBox, el('button', { class: 'btn small', type: 'button', style: 'justify-self:start', onclick: () => { if (products[0]) { items.push({ product_id: products[0].id, qty: 1 }); draw(); } } }, '＋ Додати складник'), hint),
+    el('div', { class: 'two' }, el('label', { class: 'f' }, 'Ціна, ₴', price), el('label', { class: 'f' }, 'Порядок', sort)),
+    el('label', { style: 'display:flex;gap:8px;margin:6px 0' }, act, 'Показувати на сайті'), err,
+    el('div', { class: 'acts' },
+      b ? el('button', { class: 'btn danger', style: 'margin-right:auto', onclick: async () => {
+        if (!(await confirmDlg('Видалити букет?', 'Це не вплине на вже оформлені замовлення.', 'Видалити'))) { bouquetDlg(b, products, fee); return; }
+        const { error } = await db.from('shop_bouquets').delete().eq('id', b.id);
+        if (error) { toast(error.message, true); return; } closeDlg(); toast('Видалено'); pgBouquets(++tok); } }, 'Видалити') : null,
+      el('button', { class: 'btn', onclick: closeDlg }, 'Скасувати'),
+      el('button', { class: 'btn primary', onclick: async () => {
+        if (!name.value.trim()) { err.textContent = 'Вкажіть назву'; return; }
+        if (price.value === '' || Number(price.value) < 0) { err.textContent = 'Вкажіть ціну'; return; }
+        const merged = {}; items.forEach(i => { merged[i.product_id] = (merged[i.product_id] || 0) + i.qty; });
+        const row = { name: name.value.trim(), description: desc.value.trim() || null, price: Number(price.value), tags: tagBoxes.filter(x => x[1].checked).map(x => x[0]),
+          active: act.checked, sort: parseInt(sort.value, 10) || 0, image_url: o.image_url };
+        let id = b && b.id; let res;
+        if (b) res = await db.from('shop_bouquets').update(row).eq('id', id);
+        else { res = await db.from('shop_bouquets').insert(row).select('id').single(); id = res.data && res.data.id; }
+        if (res.error) { err.textContent = res.error.message; return; }
+        const del = await db.from('shop_bouquet_items').delete().eq('bouquet_id', id);
+        if (del.error) { err.textContent = del.error.message; return; }
+        const ent = Object.entries(merged).map(([product_id, qty]) => ({ bouquet_id: id, product_id, qty }));
+        if (ent.length) { const ins = await db.from('shop_bouquet_items').insert(ent); if (ins.error) { err.textContent = ins.error.message; return; } }
+        closeDlg(); toast('Збережено'); pgBouquets(++tok); } }, 'Зберегти')));
+}
+
+/* ======================= НАЛАШТУВАННЯ ======================= */
+async function pgSettings(t) {
+  const [st, ct] = await Promise.all([db.from('shop_settings').select('*'), db.from('shop_categories').select('*').order('sort')]);
+  if (stale(t)) return;
+  const V = Object.fromEntries((st.data || []).map(r => [r.key, r.value]));
+  const sh = V.shop || {}, pr = V.prices || {}, tx = V.texts || {};
+  const field = (label, v, props) => { const i = el('input', Object.assign({ class: 'in', value: v == null ? '' : v }, props)); return [el('label', { class: 'f' }, label, i), i]; };
+  const [lName, iName] = field('Назва магазину', sh.name); const [lTag, iTag] = field('Слоган (заголовок на головній)', sh.tagline);
+  const [lPh, iPh] = field('Телефон', sh.phone); const [lCity, iCity] = field('Місто', sh.city);
+  const [lTg, iTg] = field('Telegram (нік або посилання)', sh.telegram); const [lIg, iIg] = field('Instagram (нік або посилання)', sh.instagram);
+  const about = el('textarea', { class: 'in' }); about.value = sh.about || '';
+  const [lA, iA] = field('Вартість збірки власного букета, ₴', pr.assembly_fee, { type: 'number', min: 0 });
+  const [lC, iC] = field('Кур’єр по місту, ₴', pr.courier_fee, { type: 'number', min: 0 });
+  const [lF, iF] = field('Безкоштовна доставка від, ₴', pr.free_delivery_from, { type: 'number', min: 0 });
+  const [lM, iM] = field('Мінімальна сума замовлення, ₴', pr.min_order, { type: 'number', min: 0 });
+  const alc = el('textarea', { class: 'in' }); alc.value = tx.alcohol_notice || '';
+  const msg = el('span', { class: 'sub' });
+  const save = el('button', { class: 'btn primary', onclick: async () => {
+    const rows = [
+      { key: 'shop', value: { name: iName.value.trim(), tagline: iTag.value.trim(), phone: iPh.value.trim(), city: iCity.value.trim(), telegram: iTg.value.trim(), instagram: iIg.value.trim(), about: about.value.trim() } },
+      { key: 'prices', value: { assembly_fee: Number(iA.value) || 0, courier_fee: Number(iC.value) || 0, free_delivery_from: Number(iF.value) || 0, min_order: Number(iM.value) || 0 } },
+      { key: 'texts', value: { alcohol_notice: alc.value.trim() } }
+    ].map(r => ({ ...r, updated_at: new Date().toISOString() }));
+    const { error } = await db.from('shop_settings').upsert(rows);
+    msg.className = error ? 'err' : 'okc'; msg.textContent = error ? error.message : 'Збережено';
+  } }, 'Зберегти налаштування');
+
+  const catList = el('div');
+  const drawCats = cats => catList.replaceChildren(...cats.map(c => {
+    const nm = el('input', { class: 'in', value: c.name }); const em = el('input', { class: 'in', value: c.emoji, style: 'width:70px' });
+    const kind = el('select', { class: 'in', style: 'width:150px' }, el('option', { value: 'item', selected: c.kind === 'item' }, 'Складники'), el('option', { value: 'base', selected: c.kind === 'base' }, 'Упаковка'));
+    const al = el('input', { type: 'checkbox', checked: c.is_alcohol }); const so = el('input', { class: 'in', type: 'number', value: c.sort, style: 'width:70px' });
+    return el('div', { class: 'row' }, em, el('div', { class: 'grow' }, nm), kind, el('label', { class: 'sub' }, al, ' 18+'), so,
+      el('button', { class: 'btn small', onclick: async () => {
+        const { error } = await db.from('shop_categories').update({ name: nm.value.trim(), emoji: em.value.trim() || '🎁', kind: kind.value, is_alcohol: al.checked, sort: parseInt(so.value, 10) || 0 }).eq('id', c.id);
+        toast(error ? error.message : 'Збережено', !!error); } }, 'Зберегти'),
+      el('button', { class: 'btn small danger', onclick: async () => {
+        if (!(await confirmDlg('Видалити категорію?', 'Товари залишаться, але без категорії.', 'Видалити'))) { closeDlg(); return; } closeDlg();
+        const { error } = await db.from('shop_categories').delete().eq('id', c.id);
+        if (error) { toast(error.message, true); return; } pgSettings(++tok); } }, '✕'));
+  }));
+  drawCats(ct.data || []);
+  const newName = el('input', { class: 'in', placeholder: 'Назва нової категорії' });
+  show(
+    el('div', { class: 'panel' }, el('h3', null, '🏪 Магазин'), el('div', { class: 'pad' }, lName, lTag, el('div', { class: 'two' }, lPh, lCity), el('div', { class: 'two' }, lTg, lIg), el('label', { class: 'f' }, 'Про магазин', about))),
+    el('div', { class: 'panel' }, el('h3', null, '💰 Ціни й доставка'), el('div', { class: 'pad' }, el('div', { class: 'two' }, lA, lC), el('div', { class: 'two' }, lF, lM))),
+    el('div', { class: 'panel' }, el('h3', null, '🔞 Текст про алкоголь'), el('div', { class: 'pad' }, alc)),
+    el('div', { style: 'margin-bottom:18px' }, save, ' ', msg),
+    el('div', { class: 'panel' }, el('h3', null, '🗂 Категорії товарів'), catList,
+      el('div', { class: 'row' }, el('div', { class: 'grow' }, newName), el('button', { class: 'btn', onclick: async () => {
+        if (!newName.value.trim()) return;
+        const { error } = await db.from('shop_categories').insert({ name: newName.value.trim(), slug: 'cat-' + Date.now().toString(36), sort: (ct.data || []).length + 1 });
+        if (error) { toast(error.message, true); return; } pgSettings(++tok); } }, '＋ Додати'))));
+}
+
+/* ======================= СТАРТ ======================= */
+(async function boot() {
+  const { data } = await db.auth.getSession();
+  await enter(data.session);
+})();
+</script>
+</body>
+</html>
