@@ -416,7 +416,7 @@ function productDlg(p, cats) {
 }
 
 /* ======================= ГОТОВІ БУКЕТИ ======================= */
-const TAGS = [['soap', '🧼 Мильні'], ['candy', '🍬 Солодкі'], ['alcohol', '🥂 Алкогольні'], ['mixed', '💐 Мікс']];
+const TAGS = [['soap', '🧼 Мильні'], ['candy', '🍬 Солодкі'], ['cake', '🎂 Торти'], ['alcohol', '🥂 Алкогольні'], ['mixed', '💐 Мікс']];
 async function pgBouquets(t) {
   const [bq, pr, st] = await Promise.all([
     db.from('shop_bouquets').select('*, shop_bouquet_items(product_id, qty)').order('sort'),
