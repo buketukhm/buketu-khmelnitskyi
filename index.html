@@ -274,6 +274,51 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
   .lb-nav { width: 44px; height: 44px; }
 }
 @media (hover: none) { .tile .cap { opacity: 1; } .card:hover, .btn:hover { transform: none; box-shadow: none; } }
+
+/* --- окрема сторінка букета --- */
+.bqp { padding: 22px 0 10px; }
+.bqp .back { margin-bottom: 14px; }
+.bqp-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; align-items: start; }
+.bq-main { position: relative; aspect-ratio: 4 / 3; border-radius: 22px; overflow: hidden; background: linear-gradient(135deg, #ffe9f0, #fff4e0); box-shadow: var(--shadow); border: 1px solid var(--line); cursor: zoom-in; touch-action: pan-y; }
+.bq-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bq-main .ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 120px; cursor: default; }
+.bq-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255, 255, 255, .92); font-size: 22px; cursor: pointer; box-shadow: var(--shadow); z-index: 2; }
+.bq-nav.prev { left: 12px; } .bq-nav.next { right: 12px; }
+.bq-count { position: absolute; right: 12px; bottom: 12px; background: rgba(0, 0, 0, .55); color: #fff; border-radius: 999px; padding: 2px 10px; font-size: 13px; z-index: 2; }
+.bq-thumbs { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.bq-thumbs button { flex: none; width: 78px; height: 62px; border-radius: 12px; border: 2px solid transparent; padding: 0; overflow: hidden; cursor: pointer; background: #fff; opacity: .7; }
+.bq-thumbs button.on { border-color: var(--pink); opacity: 1; }
+.bq-thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bqp h1 { font-size: clamp(26px, 4vw, 38px); margin: 8px 0 6px; }
+.bqp .price.big { font-size: 34px; margin: 6px 0 10px; }
+.bqp .desc { color: #5a5663; margin: 0 0 14px; }
+.bq-comp { width: 100%; border-collapse: collapse; font-size: 14px; margin: 6px 0 14px; }
+.bq-comp td { padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.bq-comp td:last-child { text-align: right; white-space: nowrap; }
+.bq-acts { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.bq-related { margin-top: 36px; }
+.bq-related h2 { font-size: 24px; margin-bottom: 14px; }
+.card .count { position: absolute; left: 10px; bottom: 10px; background: rgba(0, 0, 0, .55); color: #fff; border-radius: 999px; padding: 1px 9px; font-size: 12px; }
+.card .picwrap { position: relative; cursor: pointer; }
+.card .picwrap .pic { display: block; }
+#pv { position: fixed; inset: 0; z-index: 100; background: rgba(15, 8, 14, .94); display: flex; align-items: center; justify-content: center; }
+#pv img { max-width: 94vw; max-height: 90vh; object-fit: contain; border-radius: 10px; }
+#pv .x { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255, 255, 255, .92); font-size: 20px; cursor: pointer; }
+#pv .nv { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; border: none; background: rgba(255, 255, 255, .92); font-size: 24px; cursor: pointer; }
+#pv .nv.prev { left: 14px; } #pv .nv.next { right: 14px; }
+#pv .cnt { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 14px; }
+.bqbar { display: none; }
+@media (max-width: 900px) { .bqp-grid { grid-template-columns: 1fr; gap: 16px; } }
+@media (max-width: 560px) {
+  .bqp { padding-top: 14px; }
+  .bq-main { border-radius: 16px; } .bq-main .ph { font-size: 80px; }
+  .bq-nav { width: 40px; height: 40px; }
+  .bqp .price.big { font-size: 28px; }
+  .bqbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; gap: 12px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(120, 50, 70, .14); }
+  .bqbar.hidden { display: none !important; }
+  .bqbar .t { flex: 1; line-height: 1.2; } .bqbar .t small { display: block; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bqbar .t b { font-size: 20px; }
+  .bq-related { padding-bottom: 70px; }
+}
 </style>
 </head>
 <body>
@@ -402,6 +447,9 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
   </section>
 </main>
 
+<section id="bqPage" class="hidden"><div class="wrap"></div></section>
+<div id="bqBar" class="bqbar hidden"><div class="t"><small id="bqBarName"></small><b id="bqBarPrice"></b></div><button class="btn primary" id="bqBarAdd" type="button">У кошик</button></div>
+
 <footer id="contacts">
   <div class="wrap cols">
     <div><b style="font-size:20px" id="ftName">Букетарня</b><p id="ftAbout"></p></div>
@@ -477,8 +525,14 @@ const DEMO_DATA = (() => {
     b('b7', 'Торт для нього', 'Торт із міні-коньяку, віскі й шоколаду. Лише для повнолітніх', 980, ['alcohol', 'candy', 'cake'], [['p20', 1], ['p13', 3], ['p14', 2], ['p12', 6], ['p29', 1]]),
     b('b8', 'Дитячий торт', 'Яскравий торт із льодяників, мармеладу й міні-шоколадок', 790, ['candy', 'cake'], [['p20', 1], ['p11', 8], ['p23', 2], ['p12', 4], ['p26', 1], ['p28', 12]])
   ];
+  const art = (emoji, c1, c2, label) => 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient></defs><rect width="800" height="600" fill="url(#g)"/><text x="400" y="330" font-size="220" text-anchor="middle">' + emoji + '</text><text x="400" y="520" font-size="40" text-anchor="middle" fill="#6b4a58" font-family="sans-serif">' + label + '</text></svg>');
+  const bqPhotos = {
+    b1: [art('🧼', '#ffe3ec', '#fff0d6', 'Загальний вигляд'), art('🌸', '#fde0f0', '#e4f6ef', 'Мильні квіти зблизька'), art('🎀', '#fff0d6', '#ffe3ec', 'Упаковка')],
+    b2: [art('🍬', '#fff0d6', '#ffe3ec', 'Загальний вигляд'), art('🍭', '#e4f6ef', '#fde0f0', 'Льодяники')],
+    b5: [art('🎂', '#ffe9f0', '#fff4e0', 'Цукерковий торт'), art('🕯️', '#fff4e0', '#fde0f0', 'Зі свічкою'), art('🍫', '#fde0f0', '#fff0d6', 'Начинка')]
+  };
   return {
-    categories: c, products, bouquets,
+    categories: c, products, bouquets, bqPhotos,
     gallery: [
       { id: 'g1', title: 'Весняна ніжність', description: 'Мильні троянди й півонії в крафт-папері, декоровані цукерками. Підходить на 8 Березня й день народження.', image_url: null, tags: ['soap', 'candy'], bouquet_id: 'b1', sort: 1 },
       { id: 'g2', title: 'Солодкий сюрприз', description: 'Букет із шоколадних цукерок і льодяників у прозорій плівці. Дітям і дорослим.', image_url: null, tags: ['candy'], bouquet_id: 'b2', sort: 2 },
@@ -524,7 +578,7 @@ function toast(msg) {
 }
 
 /* ======================= СТАН ======================= */
-const S = { cats: [], products: [], bouquets: [], gallery: [], galFilter: 'all', settings: {}, cart: [], filter: 'all', tab: null,
+const S = { cats: [], products: [], bouquets: [], gallery: [], bqPhotos: {}, loaded: false, galFilter: 'all', settings: {}, cart: [], filter: 'all', tab: null,
   builder: { base: null, qty: {} }, view: 'cart', age: false };
 const pById = {};
 const cById = {};
@@ -538,7 +592,7 @@ const stockLeft = p => (p && p.stock != null ? p.stock : Infinity);
 /* ======================= ЗАВАНТАЖЕННЯ ДАНИХ ======================= */
 async function loadAll() {
   if (DEMO) {
-    S.cats = DEMO_DATA.categories; S.products = DEMO_DATA.products; S.bouquets = DEMO_DATA.bouquets; S.settings = DEMO_DATA.settings; S.gallery = DEMO_DATA.gallery;
+    S.cats = DEMO_DATA.categories; S.products = DEMO_DATA.products; S.bouquets = DEMO_DATA.bouquets; S.settings = DEMO_DATA.settings; S.gallery = DEMO_DATA.gallery; S.bqPhotos = DEMO_DATA.bqPhotos;
     $('#demoBanner').classList.remove('hidden');
   } else {
     const [st, ct, pr, bq] = await Promise.all([
@@ -556,12 +610,18 @@ async function loadAll() {
       const gl = await db.from('shop_gallery').select('*').eq('active', true).order('sort').order('created_at', { ascending: false });
       S.gallery = gl.error ? [] : gl.data || [];     // якщо таблицю ще не створено, галерея просто прихована
     } catch (e) { S.gallery = []; }
+    try {
+      const bp = await db.from('shop_bouquet_photos').select('bouquet_id, url, sort').order('sort');
+      S.bqPhotos = {};
+      (bp.error ? [] : bp.data || []).forEach(r => { (S.bqPhotos[r.bouquet_id] = S.bqPhotos[r.bouquet_id] || []).push(r.url); });   // без таблиці працює обкладинка image_url
+    } catch (e) { S.bqPhotos = {}; }
   }
   S.cats.forEach(c => { cById[c.id] = c; });
   S.products.forEach(p => { pById[p.id] = p; });
   // прибираємо з кошика товари, яких більше немає
   S.cart = S.cart.filter(l => l.kind === 'product' ? pById[l.id] : l.kind === 'bouquet' ? S.bouquets.some(b => b.id === l.id) : (l.comps || []).every(c => pById[c.id]));
   saveCart();
+  S.loaded = true;
 }
 
 /* ======================= ЦІНИ Й СКЛАД ======================= */
@@ -625,6 +685,12 @@ function renderCartBadge() {
 }
 
 /* ======================= КАТАЛОГ ГОТОВИХ БУКЕТІВ ======================= */
+const bouquetPhotos = b => { const l = S.bqPhotos[b.id]; return l && l.length ? l : (b.image_url ? [b.image_url] : []); };
+function goBouquet(id) { bqScroll = window.scrollY; bqFromList = true; location.hash = '#bouquet=' + encodeURIComponent(id); }
+let bqScroll = 0;
+let bqFromList = false;
+let bqCur = null;
+
 function renderCatalog() {
   const tags = ['all', ...Object.keys(TAG_NAME).filter(t => S.bouquets.some(b => (b.tags || []).includes(t)))];
   $('#filters').replaceChildren(...tags.map(t => h('button', { class: 'chip' + (S.filter === t ? ' active' : ''), type: 'button',
@@ -633,9 +699,12 @@ function renderCatalog() {
   $('#bqEmpty').style.display = list.length ? 'none' : 'block';
   $('#bqGrid').replaceChildren(...list.map((b, bi) => {
     const alc = bouquetAlc(b);
-    const open = () => openDetail(list.map(detailOf.bouquet), bi);
-    const pic = b.image_url ? h('img', { class: 'pic', src: b.image_url, alt: b.name, loading: 'lazy', onclick: open })
-      : h('div', { class: 'pic', onclick: open }, (b.tags || []).map(t => TAG_EMOJI[t]).filter(Boolean).slice(0, 3).join(' ') || '💐');
+    const open = () => goBouquet(b.id);
+    const ph = bouquetPhotos(b);
+    const pic = h('div', { class: 'picwrap', onclick: open },
+      ph.length ? h('img', { class: 'pic', src: ph[0], alt: b.name, loading: 'lazy' })
+        : h('div', { class: 'pic' }, (b.tags || []).map(t => TAG_EMOJI[t]).filter(Boolean).slice(0, 3).join(' ') || '💐'),
+      ph.length > 1 ? h('span', { class: 'count' }, '📷 ' + ph.length) : null);
     return h('article', { class: 'card' }, pic,
       h('div', { class: 'body' },
         h('div', { class: 'tags' }, alc ? h('span', { class: 'tag alc' }, '18+') : null, ...(b.tags || []).filter(t => TAG_NAME[t] && t !== 'alcohol').map(t => h('span', { class: 'tag' }, TAG_NAME[t]))),
@@ -712,6 +781,7 @@ function drawDetail() {
   const acts = [];
   if (b) {
     acts.push(h('button', { class: 'btn primary', type: 'button', onclick: async () => { await addBouquet(b); } }, 'У кошик'),
+      h('button', { class: 'btn', type: 'button', onclick: () => { closeDetail(); goBouquet(b.id); } }, 'Сторінка букета'),
       h('button', { class: 'btn', type: 'button', onclick: () => { closeDetail(); editInBuilder(b); } }, 'Змінити склад'));
   } else {
     acts.push(h('button', { class: 'btn primary', type: 'button', onclick: () => { closeDetail(); document.getElementById('builder').scrollIntoView({ behavior: 'smooth' }); } }, 'Зібрати схожий букет'));
@@ -999,6 +1069,123 @@ document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () 
 }));
 
 /* ======================= СТАРТ ======================= */
+
+/* ======================= ОКРЕМА СТОРІНКА БУКЕТА ======================= */
+let bqIdx = 0;
+function renderBouquetPage(id) {
+  const box = document.querySelector('#bqPage .wrap');
+  const shopName = (S.settings.shop && S.settings.shop.name) || 'Букетарня';
+  const b = S.bouquets.find(x => x.id === id);
+  const back = h('button', { class: 'btn back', type: 'button', onclick: closeBouquetPage }, '← До каталогу');
+  if (!b) {
+    bqCur = null;
+    $('#bqBar').classList.add('hidden');
+    box.replaceChildren(h('div', { class: 'bqp' }, back, h('h1', null, 'Букет не знайдено'), h('p', { class: 'desc' }, 'Можливо, його вже прибрали з каталогу.'), h('a', { class: 'btn primary', href: '#catalog' }, 'Переглянути всі букети')));
+    return;
+  }
+  bqCur = b; bqIdx = 0;
+  document.title = b.name + ' — ' + shopName;
+  const photos = bouquetPhotos(b);
+  const alc = bouquetAlc(b);
+
+  const main = h('div', { class: 'bq-main', title: photos.length ? 'Натисніть, щоб відкрити на весь екран' : '' });
+  const thumbs = h('div', { class: 'bq-thumbs' });
+  const draw = () => {
+    main.replaceChildren(photos.length ? h('img', { src: photos[bqIdx], alt: b.name + ' · фото ' + (bqIdx + 1) }) : h('div', { class: 'ph' }, (b.tags || []).map(t => TAG_EMOJI[t]).filter(Boolean).slice(0, 3).join(' ') || '💐'),
+      ...(photos.length > 1 ? [h('button', { class: 'bq-nav prev', type: 'button', 'aria-label': 'Попереднє фото', onclick: e => { e.stopPropagation(); step(-1); } }, '‹'),
+        h('button', { class: 'bq-nav next', type: 'button', 'aria-label': 'Наступне фото', onclick: e => { e.stopPropagation(); step(1); } }, '›'),
+        h('span', { class: 'bq-count' }, (bqIdx + 1) + ' / ' + photos.length)] : []));
+    thumbs.replaceChildren(...(photos.length > 1 ? photos.map((u, i) => h('button', { type: 'button', class: i === bqIdx ? 'on' : '', 'aria-label': 'Фото ' + (i + 1), onclick: () => { bqIdx = i; draw(); } }, h('img', { src: u, alt: '' }))) : []));
+  };
+  const step = d => { if (photos.length < 2) return; bqIdx = (bqIdx + d + photos.length) % photos.length; draw(); };
+  main.addEventListener('click', () => { if (photos.length) openViewer(photos, bqIdx, i => { bqIdx = i; draw(); }); });
+  let x0 = null;
+  main.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  main.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 45) step(dx < 0 ? 1 : -1); }, { passive: true });
+  draw();
+  bqPageStep = step;
+
+  const comp = b.items.map(i => ({ p: pById[i.product_id], q: i.qty })).filter(x => x.p);
+  const compTable = h('table', { class: 'bq-comp' }, h('tbody', null, ...comp.map(x => h('tr', null, h('td', null, x.p.name + (x.p.volume ? ' (' + x.p.volume + ')' : '')), h('td', null, '× ' + x.q), h('td', null, money(x.p.price * x.q))))));
+  const sum = comp.reduce((a, x) => a + x.p.price * x.q, 0);
+  const share = h('button', { class: 'btn', type: 'button', onclick: async () => { try { await navigator.clipboard.writeText(location.href); toast('Посилання скопійовано'); } catch (e) { window.prompt('Скопіюйте посилання:', location.href); } } }, '🔗 Поділитись');
+  const info = h('div', null,
+    h('div', { class: 'tags' }, alc ? h('span', { class: 'tag alc' }, '18+') : null, ...(b.tags || []).filter(t => TAG_NAME[t] && t !== 'alcohol').map(t => h('span', { class: 'tag' }, (TAG_EMOJI[t] || '') + ' ' + TAG_NAME[t]))),
+    h('h1', null, b.name),
+    h('div', { class: 'price big' }, money(b.price)),
+    b.description ? h('p', { class: 'desc' }, b.description) : null,
+    comp.length ? [h('b', null, 'Склад букета'), compTable, sum > b.price ? h('p', { class: 'sub', style: 'color:var(--muted);font-size:13px;margin:-8px 0 12px' }, 'Окремо складники коштували б ' + money(sum) + ', у букеті дешевше: ' + money(b.price)) : null] : null,
+    alc ? h('p', { style: 'font-size:13px;color:var(--muted)' }, 'Алкоголь продається лише особам від 18 років. Під час отримання потрібен документ.') : null,
+    h('div', { class: 'bq-acts' },
+      h('button', { class: 'btn primary', type: 'button', onclick: () => addBouquet(b) }, '🛒 У кошик'),
+      h('button', { class: 'btn', type: 'button', onclick: () => { closeBouquetPage(); setTimeout(() => editInBuilder(b), 60); } }, '✏️ Змінити склад'), share));
+
+  const related = S.bouquets.filter(x => x.id !== b.id && (b.tags || []).some(t => (x.tags || []).includes(t))).slice(0, 4);
+  const rel = related.length ? h('div', { class: 'bq-related' }, h('h2', null, 'Схожі букети'), h('div', { class: 'grid' }, ...related.map(x => {
+    const ph = bouquetPhotos(x);
+    return h('article', { class: 'card' }, h('div', { class: 'picwrap', onclick: () => { bqFromList = false; location.hash = '#bouquet=' + encodeURIComponent(x.id); } },
+      ph.length ? h('img', { class: 'pic', src: ph[0], alt: x.name, loading: 'lazy' }) : h('div', { class: 'pic' }, (x.tags || []).map(t => TAG_EMOJI[t]).filter(Boolean).slice(0, 3).join(' ') || '💐')),
+      h('div', { class: 'body' }, h('h3', { style: 'cursor:pointer', onclick: () => { bqFromList = false; location.hash = '#bouquet=' + encodeURIComponent(x.id); } }, x.name), h('div', { class: 'foot' }, h('span', { class: 'price' }, money(x.price)))));
+  }))) : null;
+
+  box.replaceChildren(h('div', { class: 'bqp' }, back, h('div', { class: 'bqp-grid' }, h('div', null, main, thumbs), info), rel));
+  $('#bqBarName').textContent = b.name; $('#bqBarPrice').textContent = money(b.price);
+  $('#bqBar').classList.remove('hidden');
+}
+let bqPageStep = null;
+function closeBouquetPage() {
+  if (bqFromList && history.length > 1) history.back();
+  else location.hash = '#catalog';
+}
+
+/* повноекранний перегляд фото */
+function openViewer(list, start, onChange) {
+  let i = start;
+  const old = document.getElementById('pv'); if (old) old.remove();
+  const img = h('img', { alt: '' });
+  const cnt = h('div', { class: 'cnt' });
+  const ov = h('div', { id: 'pv', role: 'dialog', 'aria-modal': 'true' }, img, cnt, h('button', { class: 'x', type: 'button', 'aria-label': 'Закрити', onclick: close }, '✕'));
+  const set = n => { i = (n + list.length) % list.length; img.src = list[i]; cnt.textContent = list.length > 1 ? (i + 1) + ' / ' + list.length : ''; if (onChange) onChange(i); };
+  if (list.length > 1) ov.append(h('button', { class: 'nv prev', type: 'button', 'aria-label': 'Попереднє', onclick: () => set(i - 1) }, '‹'), h('button', { class: 'nv next', type: 'button', 'aria-label': 'Наступне', onclick: () => set(i + 1) }, '›'));
+  function close() { ov.remove(); document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; }
+  function onKey(e) { if (e.key === 'Escape') close(); else if (e.key === 'ArrowLeft') set(i - 1); else if (e.key === 'ArrowRight') set(i + 1); }
+  ov.addEventListener('click', e => { if (e.target === ov) close(); });
+  let x0 = null;
+  ov.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  ov.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 45) set(i + (dx < 0 ? 1 : -1)); }, { passive: true });
+  document.addEventListener('keydown', onKey);
+  document.body.append(ov); document.body.style.overflow = 'hidden'; set(i);
+}
+
+/* маршрутизація: #bouquet=<id> відкриває окрему сторінку букета */
+const baseTitle = document.title;
+function routeBq() {
+  const m = location.hash.match(/^#bouquet=(.+)$/);
+  const page = document.getElementById('bqPage'); const mainEl = document.getElementById('top');
+  if (m) {
+    if (!S.loaded) return;
+    mainEl.classList.add('hidden'); page.classList.remove('hidden');
+    renderBouquetPage(decodeURIComponent(m[1]));
+    window.scrollTo(0, 0);
+  } else if (!page.classList.contains('hidden')) {
+    page.classList.add('hidden'); mainEl.classList.remove('hidden');
+    $('#bqBar').classList.add('hidden');
+    document.title = (S.settings.shop && S.settings.shop.name ? S.settings.shop.name + ' — ' : '') + 'букети з мила, цукерок і не тільки';
+    bqCur = null; bqFromList = false;
+    let t = null;
+    try { t = location.hash.length > 1 ? document.querySelector(location.hash) : null; } catch (e) { t = null; }
+    if (t) t.scrollIntoView(); else window.scrollTo(0, bqScroll || 0);
+  }
+}
+window.addEventListener('hashchange', routeBq);
+document.addEventListener('keydown', e => {
+  if (!bqCur || document.getElementById('pv') || !$('#modal').classList.contains('hidden') || !$('#drawer').classList.contains('hidden')) return;
+  if (/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) return;
+  if (e.key === 'ArrowLeft' && bqPageStep) bqPageStep(-1);
+  else if (e.key === 'ArrowRight' && bqPageStep) bqPageStep(1);
+});
+$('#bqBarAdd').addEventListener('click', () => { if (bqCur) addBouquet(bqCur); });
+
 (async function init() {
   try {
     await loadAll();
@@ -1007,6 +1194,7 @@ document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () 
     return;
   }
   renderShell(); renderCatalog(); renderGallery(); renderBuilder(); renderCartBadge();
+  routeBq();
 })();
 </script>
 </body>
