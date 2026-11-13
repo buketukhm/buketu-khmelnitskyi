@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Адмінка магазину</title>
+<title>Vash Present · адмінка</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8D%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -126,7 +126,7 @@ table.t td { padding: 6px 8px; border-top: 1px solid var(--line); vertical-align
 
 <div id="login" class="hidden">
   <form class="lcard" id="loginForm">
-    <h1>🛍️ Адмінка магазину</h1>
+    <h1>Vash Present · адмінка</h1>
     <p class="sub" style="margin:0 0 14px">Вхід для власника магазину.</p>
     <input class="in" id="lgEmail" type="email" placeholder="Email" autocomplete="username" required>
     <input class="in" id="lgPass" type="password" placeholder="Пароль" autocomplete="current-password" required>
@@ -137,7 +137,7 @@ table.t td { padding: 6px 8px; border-top: 1px solid var(--line); vertical-align
 
 <div id="app" class="hidden">
   <nav id="side">
-    <h2>🛍️ Магазин</h2>
+    <h2>Vash Present</h2>
     <a href="#orders" data-page="orders"><span class="ic">📦</span><span class="lg">Замовлення</span><span class="sh">Замовл.</span><span class="nb hidden" id="nbOrders"></span></a>
     <a href="#products" data-page="products"><span class="ic">🍬</span><span class="lg">Товари</span><span class="sh">Товари</span></a>
     <a href="#bouquets" data-page="bouquets"><span class="ic">💐</span><span class="lg">Готові букети</span><span class="sh">Букети</span></a>
@@ -246,7 +246,7 @@ async function poll(announce) {
   const { count } = await db.from('shop_orders').select('*', { count: 'exact', head: true }).eq('status', 'new');
   const n = count || 0;
   $('nbOrders').textContent = n || ''; $('nbOrders').classList.toggle('hidden', !n);
-  document.title = (n ? '(' + n + ') ' : '') + 'Адмінка магазину';
+  document.title = (n ? '(' + n + ') ' : '') + 'Vash Present · адмінка';
   if (announce && lastNew != null && n > lastNew) toast('📦 Нових замовлень: ' + (n - lastNew));
   lastNew = n;
 }
