@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WashPresent — букети з мила, цукерок і не тільки</title>
+<title>Vash Present — букети з мила, цукерок і не тільки</title>
 <meta name="description" content="Подарункові букети ручної роботи: мильні квіти, цукерки, міні-алкоголь. Збери власний букет або обери готовий.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%90%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141414'/%3E%3Cpolyline points='14,30 32,60 50,30' fill='none' stroke='%23F3F0EB' stroke-width='5'/%3E%3Ccircle cx='24' cy='22' r='6.5' fill='%23F3F0EB'/%3E%3Ccircle cx='40' cy='22' r='6.5' fill='none' stroke='%23F3F0EB' stroke-width='2'/%3E%3Ccircle cx='32' cy='14' r='9' fill='%23E8708F'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg: #fff8f5; --card: #ffffff; --ink: #2b2a33; --muted: #7b7785; --line: #f0e3df;
-  --pink: #e5487f; --pink-d: #c9336a; --mint: #2f8f78; --gold: #f2b84b; --danger: #d63b3b;
+  --pink: #b8345a; --pink-d: #962a49; --mint: #2f8f78; --gold: #f2b84b; --danger: #d63b3b;
   --r: 18px; --shadow: 0 6px 24px rgba(180, 90, 110, .10);
 }
 * { box-sizing: border-box; }
@@ -41,8 +41,9 @@ section { padding: 56px 0 8px; scroll-margin-top: 72px; }
 /* шапка */
 .top { position: sticky; top: 0; z-index: 30; background: rgba(255, 248, 245, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .top .wrap { display: flex; align-items: center; gap: 18px; height: 66px; }
-.logo { font-weight: 800; font-size: 22px; text-decoration: none; color: var(--ink); white-space: nowrap; }
-.logo span { color: var(--pink); }
+.logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; letter-spacing: .2em; text-transform: uppercase; text-decoration: none; color: var(--ink); white-space: nowrap; }
+.logo .logo-mark { flex: none; }
+.logo .bloom { fill: var(--pink); }
 .nav { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
 .nav a { padding: 8px 12px; border-radius: 999px; color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15px; }
 .nav a:hover { background: #fdeaf1; }
@@ -51,11 +52,11 @@ section { padding: 56px 0 8px; scroll-margin-top: 72px; }
 
 /* hero */
 .hero { padding: 36px 0 24px; }
-.hero-box { border-radius: 28px; padding: clamp(24px, 5vw, 56px); background: linear-gradient(135deg, #ffe3ec, #fff0d6 60%, #e4f6ef); display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: center; }
+.hero-box { border-radius: 28px; padding: clamp(24px, 5vw, 56px); background: linear-gradient(135deg, #f6e3e8, #f3f0eb 60%, #ece8e1); display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: center; }
 .hero h1 { font-size: clamp(32px, 5.5vw, 56px); }
 .hero p { font-size: 18px; color: #5a5663; max-width: 520px; margin: 14px 0 22px; }
 .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; }
-.hero-art { font-size: clamp(90px, 16vw, 180px); text-align: center; filter: drop-shadow(0 10px 18px rgba(200, 80, 110, .25)); }
+.hero-art { display: flex; justify-content: center; align-items: center; }
 .perks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
 .perk { background: #fff; border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); font-size: 14px; }
 .perk b { display: block; font-size: 15px; }
@@ -194,7 +195,8 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
 .bbar { display: none; }
 @media (max-width: 760px) {
   .top .wrap { height: 58px; gap: 10px; }
-  .logo { font-size: 19px; margin-right: auto; }
+  .logo { font-size: 13px; letter-spacing: .16em; margin-right: auto; }
+  .logo .logo-mark { width: 26px; height: 26px; }
   .cartbtn { padding: 9px 14px; }
   .menubtn { display: inline-flex; align-items: center; justify-content: center; }
   .nav { display: none; position: absolute; top: 58px; left: 0; right: 0; flex-direction: column; gap: 0; margin: 0; padding: 8px 16px 14px; background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(120, 50, 70, .12); }
@@ -327,7 +329,7 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
 
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="#top" id="logo">💐 <span id="shopName">WashPresent</span></a>
+    <a class="logo" href="#top" id="logo"><svg class="logo-mark" viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><path d="M26 34 L32 54 M38 34 L32 54 M32 30 L32 54"/></g><polyline points="14,30 32,60 50,30" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="miter" stroke-miterlimit="10"/><circle cx="24" cy="22" r="6.5" fill="currentColor"/><circle cx="40" cy="22" r="6.5" fill="var(--bg)" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="14" r="9" class="bloom" stroke="var(--bg)" stroke-width="2"/></svg><span id="shopName">Vash Present</span></a>
     <nav class="nav">
       <a href="#catalog">Букети</a>
       <a href="#gallery" id="navGallery" class="hidden">Галерея</a>
@@ -352,7 +354,7 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
           <a class="btn" href="#builder">Зібрати власний</a>
         </div>
       </div>
-      <div class="hero-art">💐</div>
+      <div class="hero-art"><svg viewBox="0 0 64 64" width="220" height="220" aria-hidden="true" style="color:var(--ink)"><g stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"><path d="M26 34 L32 54 M38 34 L32 54 M32 30 L32 54"/></g><polyline points="14,30 32,60 50,30" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter" stroke-miterlimit="10"/><circle cx="24" cy="22" r="6.5" fill="currentColor"/><circle cx="40" cy="22" r="6.5" fill="#fff" stroke="currentColor" stroke-width="1.4"/><circle cx="32" cy="14" r="9" fill="var(--pink)" stroke="#fff" stroke-width="1.4"/></svg></div>
     </div>
     <div class="perks">
       <div class="perk"><b>🧼 Мильні квіти</b>Довго зберігають аромат</div>
@@ -452,7 +454,7 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
 
 <footer id="contacts">
   <div class="wrap cols">
-    <div><b style="font-size:20px" id="ftName">Букетарня</b><p id="ftAbout"></p></div>
+    <div><b style="font-size:18px;letter-spacing:.18em;text-transform:uppercase" id="ftName">Vash Present</b><p id="ftAbout"></p></div>
     <div><b>Контакти</b><p><span id="ftPhone"></span><br><span id="ftCity"></span><br><a id="ftTg" class="hidden" target="_blank" rel="noopener"></a><br><a id="ftIg" class="hidden" target="_blank" rel="noopener"></a></p></div>
     <div><b>Важливо</b><p>Алкогольні вироби — лише 18+. Під час отримання потрібен документ.</p><p style="margin-top:18px;font-size:13px"><a href="admin.html" style="color:#9a96a3">Вхід для адміністратора</a></p></div>
   </div>
@@ -543,7 +545,7 @@ const DEMO_DATA = (() => {
       { id: 'g6', title: 'Букет вчителю', description: 'Компактна композиція з мильних квітів і цукерок з побажанням на листівці.', image_url: null, tags: ['soap', 'candy'], bouquet_id: null, sort: 6 }
     ],
     settings: {
-      shop: { name: 'Букетарня', tagline: 'Букети, які не в’януть', phone: '+380 00 000 00 00', telegram: '', instagram: '', city: 'Ваше місто', about: 'Збираємо оригінальні подарункові букети вручну: мильні квіти, солодкі та алкогольні композиції.' },
+      shop: { name: 'Vash Present', tagline: 'Букети, які не в’януть', phone: '+380 00 000 00 00', telegram: '', instagram: '', city: 'Ваше місто', about: 'Збираємо оригінальні подарункові букети вручну: мильні квіти, солодкі та алкогольні композиції.' },
       prices: { assembly_fee: 120, courier_fee: 100, free_delivery_from: 1500, min_order: 300 },
       texts: { alcohol_notice: 'Алкогольні вироби продаються особам, яким виповнилося 18 років. Під час отримання замовлення потрібен документ, що підтверджує вік.' }
     }
@@ -667,7 +669,7 @@ function askAge() {
 /* ======================= ШАПКА Й ПІДВАЛ ======================= */
 function renderShell() {
   const sh = S.settings.shop || {};
-  const name = sh.name || 'Букетарня';
+  const name = sh.name || 'Vash Present';
   $('#shopName').textContent = name; $('#ftName').textContent = name; document.title = name + ' — букети з мила, цукерок і не тільки';
   if (sh.tagline) $('#heroTitle').textContent = sh.tagline;
   $('#ftAbout').textContent = sh.about || '';
@@ -1074,7 +1076,7 @@ document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () 
 let bqIdx = 0;
 function renderBouquetPage(id) {
   const box = document.querySelector('#bqPage .wrap');
-  const shopName = (S.settings.shop && S.settings.shop.name) || 'Букетарня';
+  const shopName = (S.settings.shop && S.settings.shop.name) || 'Vash Present';
   const b = S.bouquets.find(x => x.id === id);
   const back = h('button', { class: 'btn back', type: 'button', onclick: closeBouquetPage }, '← До каталогу');
   if (!b) {
