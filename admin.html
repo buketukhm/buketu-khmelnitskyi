@@ -81,6 +81,42 @@ table.t td { padding: 6px 8px; border-top: 1px solid var(--line); vertical-align
   #side h2 { display: none; }
   .two { grid-template-columns: 1fr; } #main { padding: 14px; }
 }
+
+.gadm { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+#side a .sh { display: none; }
+#side a .ic { margin-right: 4px; }
+@media (max-width: 860px) {
+  #app { display: block; }
+  #side { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: auto; flex-direction: row; justify-content: space-around; gap: 0; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); border-right: none; border-top: 1px solid var(--line); z-index: 40; overflow: visible; box-shadow: 0 -6px 18px rgba(60, 30, 40, .08); }
+  #side h2, #side > div, #side a.site { display: none; }
+  #side a { flex: 1; flex-direction: column; justify-content: center; gap: 2px; padding: 6px 2px; font-size: 11px; text-align: center; border-radius: 10px; position: relative; white-space: nowrap; }
+  #side a .ic { margin: 0; font-size: 20px; line-height: 1; }
+  #side a .lg { display: none; } #side a .sh { display: block; }
+  #side a .nb { position: absolute; top: 0; left: 55%; margin: 0; }
+  #top { padding: 10px 14px; position: sticky; top: 0; z-index: 30; }
+  #top h1 { font-size: 18px; }
+  #main { padding: 12px 12px 96px; }
+  .cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat { padding: 10px 12px; } .stat b { font-size: 22px; }
+  .toolbar { gap: 6px; } .toolbar .in { max-width: none; flex: 1 1 100%; }
+  .tab { padding: 9px 14px; }
+  .row { padding: 10px 12px; gap: 6px 10px; }
+  .row .grow { min-width: 0; flex: 1 1 100%; }
+  .btn { min-height: 40px; } .btn.small { min-height: 38px; padding: 6px 12px; }
+  .in { font-size: 16px; }
+  .gadm { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dlg { padding: 0; align-items: flex-end; }
+  .dbox { border-radius: 20px 20px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); max-height: 94vh; overflow-y: auto; max-width: none; }
+  .dbox .acts { position: sticky; bottom: calc(-18px - env(safe-area-inset-bottom)); background: #fff; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); margin-top: 10px; border-top: 1px solid var(--line); }
+  .dbox .acts .btn { flex: 1 1 42%; justify-content: center; min-height: 44px; }
+  .pc { display: none !important; }
+  .two.keep2 { grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 14px; }
+  table.t th { white-space: nowrap; }
+  table.t { display: block; overflow-x: auto; }
+  .comp { grid-template-columns: 1fr 64px 40px; }
+  #toasts { bottom: 84px; left: 10px; right: 10px; } .toast { max-width: none; }
+  #login { padding: 14px; } .lcard { padding: 22px; }
+}
 @media print { #side, #top, .noprint, #toasts { display: none !important; } .dlg { position: static; background: none; padding: 0; } .dbox { box-shadow: none; max-width: none; } #app > #content { margin: 0; } }
 </style>
 </head>
@@ -102,13 +138,13 @@ table.t td { padding: 6px 8px; border-top: 1px solid var(--line); vertical-align
 <div id="app" class="hidden">
   <nav id="side">
     <h2>🛍️ Магазин</h2>
-    <a href="#orders" data-page="orders">📦 Замовлення <span class="nb hidden" id="nbOrders"></span></a>
-    <a href="#products" data-page="products">🍬 Товари</a>
-    <a href="#bouquets" data-page="bouquets">💐 Готові букети</a>
-    <a href="#gallery" data-page="gallery">🖼 Галерея</a>
-    <a href="#settings" data-page="settings">⚙️ Налаштування</a>
+    <a href="#orders" data-page="orders"><span class="ic">📦</span><span class="lg">Замовлення</span><span class="sh">Замовл.</span><span class="nb hidden" id="nbOrders"></span></a>
+    <a href="#products" data-page="products"><span class="ic">🍬</span><span class="lg">Товари</span><span class="sh">Товари</span></a>
+    <a href="#bouquets" data-page="bouquets"><span class="ic">💐</span><span class="lg">Готові букети</span><span class="sh">Букети</span></a>
+    <a href="#gallery" data-page="gallery"><span class="ic">🖼</span><span class="lg">Галерея</span><span class="sh">Галерея</span></a>
+    <a href="#settings" data-page="settings"><span class="ic">⚙️</span><span class="lg">Налаштування</span><span class="sh">Налашт.</span></a>
     <div style="flex:1"></div>
-    <a href="index.html" target="_blank" rel="noopener">🌐 Відкрити сайт</a>
+    <a href="index.html" target="_blank" rel="noopener" class="site"><span class="ic">🌐</span><span class="lg">Відкрити сайт</span></a>
   </nav>
   <div id="content">
     <header id="top"><h1 id="pageTitle"></h1><span class="sub" id="meEmail"></span><button class="btn small" id="logoutBtn" type="button">Вийти</button></header>
@@ -247,13 +283,14 @@ async function pgOrders(t) {
 const stat = (v, l) => el('div', { class: 'stat' }, el('b', null, v), el('span', null, l));
 
 function orderRow(o) {
-  return el('div', { class: 'row' + (o.status === 'cancelled' ? ' dim' : '') },
+  const row = el('div', { class: 'row' + (o.status === 'cancelled' ? ' dim' : ''), style: 'cursor:pointer', onclick: e => { if (!e.target.closest('button, a')) orderDlg(o); } },
     el('div', { class: 'grow' },
       el('div', null, el('b', null, '#' + o.code), ' ', el('span', { class: 'chip ' + o.status }, STATUS[o.status]), o.has_alcohol ? el('span', { class: 'chip alc', style: 'margin-left:6px' }, '18+') : null),
       el('div', { class: 'sub' }, o.customer_name + ' · ' + o.phone + ' · ' + fmt(o.created_at))),
     el('div', { class: 'sub' }, DELIVERY[o.delivery_method] + (o.delivery_date ? ' · ' + new Date(o.delivery_date).toLocaleDateString('uk-UA') : '') + (o.delivery_time ? ' · ' + o.delivery_time : '')),
     el('b', null, money(o.total)),
     el('button', { class: 'btn small', onclick: () => orderDlg(o) }, 'Деталі'));
+  return row;
 }
 
 function orderDlg(o) {
@@ -270,7 +307,7 @@ function orderDlg(o) {
   const next = flow[flow.indexOf(o.status) + 1];
   openDlg(
     el('h3', null, 'Замовлення #' + o.code, ' ', el('span', { class: 'chip ' + o.status }, STATUS[o.status]), o.has_alcohol ? el('span', { class: 'chip alc', style: 'margin-left:6px' }, '18+ підтверджено клієнтом') : null),
-    el('div', { class: 'two' },
+    el('div', { class: 'two keep2' },
       info('Клієнт', o.customer_name), info('Телефон', el('a', { href: 'tel:' + o.phone }, o.phone)),
       info('Email', o.email), info('Створено', fmt(o.created_at)),
       info('Отримання', DELIVERY[o.delivery_method]), info('Дата й час', (o.delivery_date ? new Date(o.delivery_date).toLocaleDateString('uk-UA') : '—') + (o.delivery_time ? ', ' + o.delivery_time : '')),
@@ -286,7 +323,7 @@ function orderDlg(o) {
     o.comment ? el('p', null, el('b', null, 'Коментар: '), o.comment) : null,
     el('label', { class: 'f noprint', style: 'margin-top:10px' }, 'Нотатка', note), err,
     el('div', { class: 'acts noprint' },
-      el('button', { class: 'btn', onclick: () => window.print() }, '🖨 Друк'),
+      el('button', { class: 'btn pc', onclick: () => window.print() }, '🖨 Друк'),
       o.status !== 'cancelled' && o.status !== 'delivered' ? el('button', { class: 'btn danger', onclick: () => setStatus('cancelled') }, 'Скасувати') : null,
       el('button', { class: 'btn', onclick: async () => {
         const { error } = await db.from('shop_orders').update({ admin_note: note.value.trim() || null }).eq('id', o.id);
@@ -482,7 +519,7 @@ async function pgGallery(t) {
   });
   show(el('div', { class: 'toolbar' }, el('button', { class: 'btn primary', onclick: () => file.click() }, '＋ Додати фото (можна кілька)'), file, msg),
     el('div', { class: 'sub', style: 'margin-bottom:12px' }, 'Фото показуються на сайті в розділі «Галерея». Клік по фото відкриває вікно з назвою, описом і (якщо прив’язано) складом та ціною букета.'),
-    list.length ? el('div', { style: 'display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px' }, ...list.map(g =>
+    list.length ? el('div', { class: 'gadm' }, ...list.map(g =>
       el('div', { class: 'panel', style: 'margin:0;' + (g.active ? '' : 'opacity:.55') },
         el('img', { src: g.image_url, alt: '', style: 'width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f1ebe9' }),
         el('div', { class: 'pad', style: 'padding:10px 12px' }, el('b', null, g.title), el('div', { class: 'sub' }, g.bouquet_id ? '💐 ' + (bName[g.bouquet_id] || 'букет') : 'без прив’язки до букета'),
