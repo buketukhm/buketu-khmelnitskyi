@@ -282,7 +282,7 @@ textarea.in { resize: vertical; min-height: 70px; }
   <div class="wrap cols">
     <div><b style="font-size:20px" id="ftName">Букетарня</b><p id="ftAbout"></p></div>
     <div><b>Контакти</b><p><span id="ftPhone"></span><br><span id="ftCity"></span><br><a id="ftTg" class="hidden" target="_blank" rel="noopener"></a><br><a id="ftIg" class="hidden" target="_blank" rel="noopener"></a></p></div>
-    <div><b>Важливо</b><p>Алкогольні вироби — лише 18+. Під час отримання потрібен документ.</p></div>
+    <div><b>Важливо</b><p>Алкогольні вироби — лише 18+. Під час отримання потрібен документ.</p><p style="margin-top:18px;font-size:13px"><a href="admin.html" style="color:#9a96a3">Вхід для адміністратора</a></p></div>
   </div>
 </footer>
 
@@ -296,7 +296,7 @@ textarea.in { resize: vertical; min-height: 70px; }
 
 <script>
 /* ======================= НАЛАШТУВАННЯ ======================= */
-const SUPABASE_URL = 'fssehmkmqoguilgxjzwk.supabase.co';   // ← вставте Project URL з Supabase
+const SUPABASE_URL = 'https://fssehmkmqoguilgxjzwk.supabase.co';   // ← вставте Project URL з Supabase
 const SUPABASE_KEY = 'sb_publishable_M3AE6WfY3bXuYeKpui9Ahg_SoYCMmEH';   // ← вставте publishable (anon) ключ
 
 /* ======================= ДЕМО-ДАНІ (якщо ключів немає) ======================= */
@@ -348,7 +348,7 @@ const DEMO_DATA = (() => {
 })();
 
 /* ======================= ДОПОМІЖНЕ ======================= */
-const DEMO = !SUPABASE_URL || !SUPABASE_KEY;
+const DEMO = !SUPABASE_URL || !SUPABASE_KEY || typeof supabase === 'undefined';
 const db = DEMO ? null : supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = (s, r = document) => r.querySelector(s);
 function h(tag, props, ...kids) {
