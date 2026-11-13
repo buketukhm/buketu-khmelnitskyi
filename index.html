@@ -75,6 +75,7 @@ section { padding: 56px 0 8px; scroll-margin-top: 72px; }
 
 /* конструктор */
 .builder { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+.builder > * { min-width: 0; }
 .panel { background: #fff; border-radius: var(--r); box-shadow: var(--shadow); border: 1px solid var(--line); padding: 18px; margin-bottom: 18px; }
 .panel h3 { font-size: 20px; margin-bottom: 4px; }
 .panel .hint { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
@@ -185,6 +186,94 @@ textarea.in { resize: vertical; min-height: 70px; }
   .nav a { padding: 6px 8px; font-size: 14px; }
 }
 @media (max-width: 560px) { .nav { display: none; } .perks, .steps, .row2 { grid-template-columns: 1fr; } }
+
+/* ======================= АДАПТАЦІЯ ПІД ТЕЛЕФОН ======================= */
+html { -webkit-text-size-adjust: 100%; }
+body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+.menubtn { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--line); background: #fff; font-size: 22px; cursor: pointer; }
+.bbar { display: none; }
+@media (max-width: 760px) {
+  .top .wrap { height: 58px; gap: 10px; }
+  .logo { font-size: 19px; margin-right: auto; }
+  .cartbtn { padding: 9px 14px; }
+  .menubtn { display: inline-flex; align-items: center; justify-content: center; }
+  .nav { display: none; position: absolute; top: 58px; left: 0; right: 0; flex-direction: column; gap: 0; margin: 0; padding: 8px 16px 14px; background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(120, 50, 70, .12); }
+  .nav.open { display: flex; }
+  .nav a { padding: 14px 8px; font-size: 17px; border-bottom: 1px solid var(--line); border-radius: 0; }
+  .nav a:last-child { border-bottom: none; }
+}
+@media (max-width: 560px) {
+  .wrap { width: calc(100% - 24px); }
+  section { padding: 34px 0 2px; scroll-margin-top: 64px; }
+  .sec-title { font-size: 26px; }
+  .sec-sub { font-size: 14px; margin-bottom: 14px; }
+  .banner { font-size: 12px; padding: 6px 10px; }
+  .hero { padding: 16px 0 10px; }
+  .hero-box { padding: 22px 18px; border-radius: 22px; gap: 10px; }
+  .hero h1 { font-size: 30px; }
+  .hero p { font-size: 15px; margin: 10px 0 16px; }
+  .hero .cta { flex-direction: column; } .hero .cta .btn { width: 100%; }
+  .perks { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .perk { padding: 10px 12px; font-size: 12px; border-radius: 14px; } .perk b { font-size: 13px; }
+  .btn { min-height: 44px; }
+  .btn.small { min-height: 40px; padding: 8px 14px; }
+  .filters { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -12px 16px; padding: 0 12px 6px; scrollbar-width: none; }
+  .filters::-webkit-scrollbar { display: none; }
+  .chip { flex: none; white-space: nowrap; padding: 9px 15px; }
+  /* каталог: дві колонки, компактні картки */
+  .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card .pic { aspect-ratio: 1 / 1; font-size: 34px; }
+  .card .body { padding: 10px 10px 12px; gap: 5px; }
+  .card h3 { font-size: 15px; }
+  .card .desc { font-size: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card .comp, .hm { display: none; }
+  .card .tags { gap: 4px; } .tag { font-size: 11px; padding: 1px 8px; }
+  .card .foot { flex-direction: column; align-items: stretch; gap: 6px; }
+  .card .foot > div { width: 100%; } .card .foot .btn { width: 100%; }
+  .price { font-size: 18px; }
+  /* галерея */
+  .gal { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tile .ph { font-size: 44px; }
+  .tile .cap { opacity: 1; padding: 22px 10px 8px; font-size: 13px; }
+  /* конструктор */
+  .builder { gap: 12px; }
+  .panel { padding: 14px; margin-bottom: 12px; border-radius: 16px; }
+  .pgrid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pcard { padding: 10px; } .pcard .ico { height: 44px; font-size: 28px; } .pcard .ico img { height: 44px; width: 44px; }
+  .stepper button { width: 40px; height: 40px; }
+  .tabs { flex-wrap: nowrap; overflow-x: auto; margin: 0 -14px 12px; padding: 0 14px 6px; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .summary { order: 2; }
+  .steps { grid-template-columns: 1fr; gap: 10px; }
+  .step { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; } .step .num { margin: 0; flex: none; }
+  footer { margin-top: 36px; padding: 26px 0 90px; }
+  /* кошик, вікна */
+  #drawer { width: 100%; }
+  #drawer header { padding: 12px 14px; } #drawer .scroll { padding: 12px 14px; }
+  #drawer footer.dfoot { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
+  .line { padding: 10px; }
+  .in { font-size: 16px; }
+  .opt { padding: 12px; }
+  .mbox { padding: 20px; border-radius: 20px; } .mbox .acts .btn { flex: 1; }
+  .code { font-size: 26px; letter-spacing: 2px; }
+  .timeline .st { font-size: 13px; }
+  #toast { bottom: 96px; max-width: calc(100% - 32px); text-align: center; }
+  /* нижня панель конструктора */
+  .bbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; gap: 12px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(120, 50, 70, .14); }
+  .bbar.hidden { display: none !important; }
+  .bbar .t { flex: 1; line-height: 1.2; } .bbar .t small { display: block; color: var(--muted); font-size: 12px; } .bbar .t b { font-size: 20px; }
+  /* вікно з інформацією */
+  .lb { padding: 0; align-items: flex-end; }
+  .lb-box { border-radius: 22px 22px 0 0; max-height: 94vh; width: 100%; display: flex; flex-direction: column; overflow: hidden; }
+  .lb-img { flex: none; min-height: 0; height: 34vh; aspect-ratio: auto; }
+  .lb-img img { max-height: 34vh; }
+  .lb-info { flex: 1; min-height: 0; padding: 16px 16px 0; max-height: none; overflow-y: auto; }
+  .lb-acts { position: sticky; bottom: 0; margin: 8px -16px 0; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--line); }
+  .lb-acts .btn { flex: 1; }
+  .lb-info h3 { font-size: 22px; }
+  .lb-nav { width: 44px; height: 44px; }
+}
+@media (hover: none) { .tile .cap { opacity: 1; } .card:hover, .btn:hover { transform: none; box-shadow: none; } }
 </style>
 </head>
 <body>
@@ -203,6 +292,7 @@ textarea.in { resize: vertical; min-height: 70px; }
       <a href="#contacts">Контакти</a>
     </nav>
     <button class="btn primary cartbtn" id="cartBtn" type="button">🛒 Кошик <span class="n hidden" id="cartN">0</span></button>
+    <button class="menubtn" id="menuBtn" type="button" aria-label="Меню" aria-expanded="false">☰</button>
   </div>
 </header>
 
@@ -326,6 +416,7 @@ textarea.in { resize: vertical; min-height: 70px; }
   <div class="scroll" id="dBody"></div>
   <footer class="dfoot" id="dFoot"></footer>
 </aside>
+<div id="bbar" class="bbar hidden"><div class="t"><small id="bbarN"></small><b id="bbarSum"></b></div><button class="btn primary" id="bbarAdd" type="button">Додати в кошик</button></div>
 <div id="lb" class="lb hidden" role="dialog" aria-modal="true"></div>
 <div id="modal" class="hidden"><div class="mbox" id="mbox"></div></div>
 
@@ -538,7 +629,7 @@ function renderCatalog() {
         h('div', { class: 'comp' }, b.items.map(i => (pById[i.product_id] ? pById[i.product_id].name : '—') + ' ×' + i.qty).join(' · ')),
         h('div', { class: 'foot' }, h('span', { class: 'price' }, money(b.price)),
           h('div', { style: 'display:flex;gap:6px;flex-wrap:wrap' },
-            h('button', { class: 'btn small', type: 'button', onclick: () => editInBuilder(b) }, 'Змінити склад'),
+            h('button', { class: 'btn small hm', type: 'button', onclick: () => editInBuilder(b) }, 'Змінити склад'),
             h('button', { class: 'btn small primary', type: 'button', onclick: () => addBouquet(b) }, 'У кошик')))));
   }));
 }
@@ -588,8 +679,9 @@ function openDetail(list, idx) {
   drawDetail();
   $('#lb').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+  updateBar();
 }
-function closeDetail() { $('#lb').classList.add('hidden'); document.body.style.overflow = ''; }
+function closeDetail() { $('#lb').classList.add('hidden'); document.body.style.overflow = ''; updateBar(); }
 function stepDetail(d) { if (LB.list.length < 2) return; LB.idx = (LB.idx + d + LB.list.length) % LB.list.length; drawDetail(); }
 
 function drawDetail() {
@@ -618,7 +710,7 @@ function drawDetail() {
       h('b', { style: 'font-size:14px' }, 'Склад букета'),
       h('ul', { class: 'lb-comp' }, ...b.items.map(i => { const p = pById[i.product_id]; return h('li', null, h('span', null, p ? p.name : '—'), h('span', null, '× ' + i.qty)); }))] : null,
     alc ? h('p', { style: 'margin:0;font-size:13px;color:var(--muted)' }, 'Алкоголь продається лише особам від 18 років.') : null,
-    h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px' }, ...acts));
+    h('div', { class: 'lb-acts', style: 'display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px' }, ...acts));
   $('#lb').replaceChildren(h('div', { class: 'lb-box' }, h('button', { class: 'lb-x', type: 'button', 'aria-label': 'Закрити', onclick: closeDetail }, '✕'), img, info));
 }
 $('#lb').addEventListener('mousedown', e => { if (e.target === $('#lb')) closeDetail(); });
@@ -692,7 +784,21 @@ function renderSummary() {
   $('#preview').textContent = emojis.slice(0, 40).join('') || '💐';
   $('#sumNote').textContent = builderItemsCount() ? '' : 'Додайте хоча б один складник, щоб додати букет у кошик.';
   $('#addCustom').disabled = !builderItemsCount();
+  const n = builderItemsCount();
+  $('#bbarN').textContent = n ? 'Ваш букет: ' + n + ' шт' : '';
+  $('#bbarSum').textContent = money(total);
+  updateBar();
 }
+let bInView = false;
+function updateBar() {
+  const show = bInView && builderItemsCount() > 0 && window.matchMedia('(max-width: 560px)').matches
+    && $('#drawer').classList.contains('hidden') && $('#lb').classList.contains('hidden');
+  $('#bbar').classList.toggle('hidden', !show);
+}
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(es => { bInView = es[0].isIntersecting; updateBar(); }, { rootMargin: '0px 0px -10% 0px' }).observe(document.getElementById('builder'));
+}
+$('#bbarAdd').addEventListener('click', () => $('#addCustom').click());
 
 $('#resetCustom').addEventListener('click', () => { S.builder = { base: null, qty: {} }; renderBuilder(); });
 $('#addCustom').addEventListener('click', async () => {
@@ -707,10 +813,11 @@ $('#addCustom').addEventListener('click', async () => {
 /* ======================= КОШИК І ОФОРМЛЕННЯ ======================= */
 function openCart(view) {
   S.view = view || 'cart';
+  setTimeout(updateBar, 0);
   $('#shade').classList.remove('hidden'); $('#drawer').classList.remove('hidden');
   renderDrawer();
 }
-function closeCart() { $('#shade').classList.add('hidden'); $('#drawer').classList.add('hidden'); }
+function closeCart() { $('#shade').classList.add('hidden'); $('#drawer').classList.add('hidden'); updateBar(); }
 $('#cartBtn').addEventListener('click', () => openCart('cart'));
 $('#dClose').addEventListener('click', closeCart);
 $('#shade').addEventListener('click', closeCart);
@@ -866,6 +973,15 @@ $('#trGo').addEventListener('click', async () => {
     h('ul', { class: 'sum-list' }, (data.items || []).map(i => h('li', null, h('span', null, i.name + ' × ' + i.qty), h('span', null, money(i.price * i.qty))))),
     h('div', { class: 'sum-total' }, h('span', null, 'Разом'), h('span', null, money(data.total)))));
 });
+
+/* ======================= МЕНЮ НА ТЕЛЕФОНІ ======================= */
+$('#menuBtn').addEventListener('click', () => {
+  const nav = document.querySelector('.nav'); const open = nav.classList.toggle('open');
+  $('#menuBtn').setAttribute('aria-expanded', open); $('#menuBtn').textContent = open ? '✕' : '☰';
+});
+document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () => {
+  document.querySelector('.nav').classList.remove('open'); $('#menuBtn').textContent = '☰'; $('#menuBtn').setAttribute('aria-expanded', 'false');
+}));
 
 /* ======================= СТАРТ ======================= */
 (async function init() {
