@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vash Present — букети з мила, цукерок і не тільки</title>
 <meta name="description" content="Подарункові букети ручної роботи: мильні квіти, цукерки, міні-алкоголь. Збери власний букет або обери готовий.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141414'/%3E%3Cpolyline points='14,30 32,60 50,30' fill='none' stroke='%23F3F0EB' stroke-width='5'/%3E%3Ccircle cx='24' cy='22' r='6.5' fill='%23F3F0EB'/%3E%3Ccircle cx='40' cy='22' r='6.5' fill='none' stroke='%23F3F0EB' stroke-width='2'/%3E%3Ccircle cx='32' cy='14' r='9' fill='%23E8708F'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141414'/%3E%3Cg transform='translate(9,18) scale(.0985)' fill='%23F3F0EB'%3E%3Cpolygon points='0,0 52,0 123,250 194,0 246,0 150,360 96,360'/%3E%3Crect x='300' width='46' height='360'/%3E%3Cpath d='M323,23 H372 A83,83 0 0 1 372,189 H323' fill='none' stroke='%23F3F0EB' stroke-width='46'/%3E%3C/g%3E%3Ccircle cx='39.6' cy='28.5' r='3.2' fill='%23E8708F'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -42,7 +42,7 @@ section { padding: 56px 0 8px; scroll-margin-top: 72px; }
 .top { position: sticky; top: 0; z-index: 30; background: rgba(255, 248, 245, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .top .wrap { display: flex; align-items: center; gap: 18px; height: 66px; }
 .logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; letter-spacing: .2em; text-transform: uppercase; text-decoration: none; color: var(--ink); white-space: nowrap; }
-.logo .logo-mark { flex: none; }
+.logo .logo-mark { flex: none; height: 22px; width: auto; }
 .logo .bloom { fill: var(--pink); }
 .nav { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
 .nav a { padding: 8px 12px; border-radius: 999px; color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15px; }
@@ -196,7 +196,7 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
 @media (max-width: 760px) {
   .top .wrap { height: 58px; gap: 10px; }
   .logo { font-size: 13px; letter-spacing: .16em; margin-right: auto; }
-  .logo .logo-mark { width: 26px; height: 26px; }
+  .logo .logo-mark { height: 19px; }
   .cartbtn { padding: 9px 14px; }
   .menubtn { display: inline-flex; align-items: center; justify-content: center; }
   .nav { display: none; position: absolute; top: 58px; left: 0; right: 0; flex-direction: column; gap: 0; margin: 0; padding: 8px 16px 14px; background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(120, 50, 70, .12); }
@@ -321,6 +321,34 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
   .bqbar .t { flex: 1; line-height: 1.2; } .bqbar .t small { display: block; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bqbar .t b { font-size: 20px; }
   .bq-related { padding-bottom: 70px; }
 }
+
+/* --- акаунти --- */
+.accbtn { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; margin-left: 4px; }
+.accbtn .ava { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex: none; }
+.accbtn .nm { font-size: 14px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.accp { padding: 24px 0 10px; }
+.accp h1 { font-size: clamp(26px, 4vw, 36px); margin: 6px 0 4px; }
+.accp .sub { color: var(--muted); margin: 0 0 16px; }
+.acc-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 18px; }
+.acc-order { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+.acc-order .hd { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.acc-order .hd b { font-size: 17px; letter-spacing: .06em; }
+.acc-order .chip2 { padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #eee; }
+.acc-order .chip2.new { background: #fde1e8; color: #b8345a; } .acc-order .chip2.delivered { background: #d8f0d4; color: #256b1f; } .acc-order .chip2.cancelled { background: #eee; color: #777; } .acc-order .chip2.ready { background: #e0f4ec; color: #1d6b58; } .acc-order .chip2.confirmed, .acc-order .chip2.assembling { background: #e3efff; color: #1b5ec2; }
+.acc-order ul { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 4px; font-size: 14px; }
+.acc-order li { display: flex; justify-content: space-between; gap: 10px; }
+.acc-order .ft { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border-top: 1px dashed var(--line); padding-top: 10px; }
+.acc-note { padding: 9px 12px; border-radius: 12px; background: #f4f1ed; border: 1px solid var(--line); font-size: 13px; margin: 10px 0; }
+.acc-note.ok { background: #eaf6f1; border-color: #bfe2d2; }
+.acc-note a { color: var(--pink-d); font-weight: 700; cursor: pointer; text-decoration: underline; }
+.acc-form { max-width: 520px; }
+.mbox.auth { max-width: 400px; text-align: left; }
+.mbox.auth h3 { text-align: center; }
+.mbox.auth .tabs2 { display: flex; gap: 6px; margin: 0 0 14px; }
+.mbox.auth .tabs2 button { flex: 1; padding: 9px; border: 1.5px solid var(--line); background: #fff; border-radius: 12px; cursor: pointer; font: inherit; font-weight: 600; }
+.mbox.auth .tabs2 button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.mbox.auth .lnk { background: none; border: none; color: var(--pink-d); cursor: pointer; font: inherit; font-size: 13px; text-decoration: underline; padding: 4px 0; }
+@media (max-width: 760px) { .accbtn { padding: 4px; margin-left: 0; } .accbtn .nm { display: none; } }
 </style>
 </head>
 <body>
@@ -329,7 +357,7 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
 
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="#top" id="logo"><svg class="logo-mark" viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><path d="M26 34 L32 54 M38 34 L32 54 M32 30 L32 54"/></g><polyline points="14,30 32,60 50,30" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="miter" stroke-miterlimit="10"/><circle cx="24" cy="22" r="6.5" fill="currentColor"/><circle cx="40" cy="22" r="6.5" fill="var(--bg)" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="14" r="9" class="bloom" stroke="var(--bg)" stroke-width="2"/></svg><span id="shopName">Vash Present</span></a>
+    <a class="logo" href="#top" id="logo"><svg class="logo-mark" viewBox="0 0 478 360" aria-hidden="true"><g fill="currentColor"><polygon points="0,0 52,0 123,250 194,0 246,0 150,360 96,360"/><rect x="300" y="0" width="46" height="360"/><path d="M323,23 H372 A83,83 0 0 1 372,189 H323" fill="none" stroke="currentColor" stroke-width="46"/></g><circle cx="391" cy="106" r="33" class="bloom"/></svg><span id="shopName">Vash Present</span></a>
     <nav class="nav">
       <a href="#catalog">Букети</a>
       <a href="#gallery" id="navGallery" class="hidden">Галерея</a>
@@ -338,6 +366,7 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
       <a href="#track">Моє замовлення</a>
       <a href="#contacts">Контакти</a>
     </nav>
+    <button class="btn accbtn hidden" id="accBtn" type="button" aria-label="Акаунт"><span class="ava" id="accAva">👤</span><span class="nm" id="accName">Увійти</span></button>
     <button class="btn primary cartbtn" id="cartBtn" type="button">🛒 Кошик <span class="n hidden" id="cartN">0</span></button>
     <button class="menubtn" id="menuBtn" type="button" aria-label="Меню" aria-expanded="false">☰</button>
   </div>
@@ -354,7 +383,7 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
           <a class="btn" href="#builder">Зібрати власний</a>
         </div>
       </div>
-      <div class="hero-art"><svg viewBox="0 0 64 64" width="220" height="220" aria-hidden="true" style="color:var(--ink)"><g stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"><path d="M26 34 L32 54 M38 34 L32 54 M32 30 L32 54"/></g><polyline points="14,30 32,60 50,30" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter" stroke-miterlimit="10"/><circle cx="24" cy="22" r="6.5" fill="currentColor"/><circle cx="40" cy="22" r="6.5" fill="#fff" stroke="currentColor" stroke-width="1.4"/><circle cx="32" cy="14" r="9" fill="var(--pink)" stroke="#fff" stroke-width="1.4"/></svg></div>
+      <div class="hero-art"><svg viewBox="0 0 478 360" width="300" height="226" aria-hidden="true" style="color:var(--ink)"><g fill="currentColor"><polygon points="0,0 52,0 123,250 194,0 246,0 150,360 96,360"/><rect x="300" y="0" width="46" height="360"/><path d="M323,23 H372 A83,83 0 0 1 372,189 H323" fill="none" stroke="currentColor" stroke-width="46"/></g><circle cx="391" cy="106" r="33" fill="var(--pink)"/></svg></div>
     </div>
     <div class="perks">
       <div class="perk"><b>🧼 Мильні квіти</b>Довго зберігають аромат</div>
@@ -450,6 +479,7 @@ body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
 </main>
 
 <section id="bqPage" class="hidden"><div class="wrap"></div></section>
+<section id="accPage" class="hidden"><div class="wrap"></div></section>
 <div id="bqBar" class="bqbar hidden"><div class="t"><small id="bqBarName"></small><b id="bqBarPrice"></b></div><button class="btn primary" id="bqBarAdd" type="button">У кошик</button></div>
 
 <footer id="contacts">
@@ -569,6 +599,8 @@ function h(tag, props, ...kids) {
   kids.flat(Infinity).forEach(c => { if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(String(c))); });
   return e;
 }
+/* replaceChildren: пропускає null/false і розгортає масиви (інакше в розмітці з'являвся текст «null») */
+(() => { const orig = Element.prototype.replaceChildren; Element.prototype.replaceChildren = function (...n) { return orig.apply(this, n.flat(Infinity).filter(x => x != null && x !== false)); }; })();
 const money = n => Number(n || 0).toLocaleString('uk-UA', { minimumFractionDigits: Number(n) % 1 ? 2 : 0, maximumFractionDigits: 2 }) + ' ₴';
 const TAG_EMOJI = { soap: '🧼', candy: '🍬', cake: '🎂', alcohol: '🥂', mixed: '💐' };
 const TAG_NAME = { soap: 'Мильні', candy: 'Солодкі', cake: 'Торти', alcohol: 'Алкогольні 18+', mixed: 'Мікс' };
@@ -580,7 +612,7 @@ function toast(msg) {
 }
 
 /* ======================= СТАН ======================= */
-const S = { cats: [], products: [], bouquets: [], gallery: [], bqPhotos: {}, loaded: false, galFilter: 'all', settings: {}, cart: [], filter: 'all', tab: null,
+const S = { cats: [], products: [], bouquets: [], gallery: [], bqPhotos: {}, loaded: false, user: null, profile: null, authReady: false, accountsOk: false, draft: {}, lastOrder: null, accTab: 'orders', galFilter: 'all', settings: {}, cart: [], filter: 'all', tab: null,
   builder: { base: null, qty: {} }, view: 'cart', age: false };
 const pById = {};
 const cById = {};
@@ -952,7 +984,13 @@ function renderCheckout() {
   const tomorrow = new Date(Date.now() + 864e5).toISOString().slice(0, 10);
   const today = new Date().toISOString().slice(0, 10);
   const f = {};
-  const inp = (id, props) => (f[id] = h('input', Object.assign({ class: 'in', id: 'ck_' + id }, props)));
+  const pf = S.profile || {};
+  const dv = id => { const d = S.draft[id]; if (d != null && d !== '') return d; return id === 'email' ? (pf.email || (S.user && S.user.email) || '') : (pf[id] || ''); };
+  let saveProf = true;
+  const inp = (id, props) => (f[id] = h('input', Object.assign({ class: 'in', id: 'ck_' + id, value: dv(id) }, props)));
+  const accNote = S.user ? h('div', { class: 'acc-note ok' }, '👤 Ви ввійшли як ' + S.user.email + '. Дані підставлено з акаунта, а замовлення збережеться в кабінеті «Мої замовлення».')
+    : S.accountsOk ? h('div', { class: 'acc-note' }, 'Є акаунт? ', h('a', { onclick: () => openAuth('login') }, 'Увійти'), ' або ', h('a', { onclick: () => openAuth('register') }, 'створити'), ': дані підставляться автоматично, а замовлення збережуться в кабінеті.') : null;
+  const saveBox = S.user && S.accountsOk ? h('label', { class: 'opt' }, h('input', { type: 'checkbox', checked: true, onchange: e => { saveProf = e.target.checked; } }), h('span', null, h('b', null, 'Зберегти ці дані в профілі'), h('small', null, 'Наступного разу вони підставляться автоматично'))) : null;
   const err = h('div', { class: 'err' });
   const totals = h('div', { class: 'totals' });
   const drawTotals = () => {
@@ -968,6 +1006,7 @@ function renderCheckout() {
   const alcCheck = h('input', { type: 'checkbox', id: 'ck_age', checked: checkout.age, onchange: e => { checkout.age = e.target.checked; } });
   body.replaceChildren(
     h('button', { class: 'btn small', type: 'button', onclick: () => { S.view = 'cart'; renderDrawer(); } }, '← Назад до кошика'),
+    accNote,
     h('h3', { style: 'margin:14px 0 8px' }, 'Ваші дані'),
     h('label', { class: 'f' }, 'Ім’я', inp('name', { placeholder: 'Як до вас звертатись', maxlength: 80, autocomplete: 'name' })),
     h('div', { class: 'row2' },
@@ -989,7 +1028,9 @@ function renderCheckout() {
     h('label', { class: 'opt' }, h('input', { type: 'radio', name: 'pm', value: 'on_receipt', checked: checkout.payment === 'on_receipt', onchange: () => { checkout.payment = 'on_receipt'; } }), h('span', null, h('b', null, 'При отриманні'), h('small', null, 'Готівкою або карткою'))),
     h('label', { class: 'opt' }, h('input', { type: 'radio', name: 'pm', value: 'transfer', checked: checkout.payment === 'transfer', onchange: () => { checkout.payment = 'transfer'; } }), h('span', null, h('b', null, 'Переказ на картку'), h('small', null, 'Реквізити надішлемо після підтвердження'))),
     alc ? h('label', { class: 'opt', style: 'border-color:#f0cf8a;background:#fffaf0' }, alcCheck, h('span', null, h('b', null, '🔞 Мені виповнилося 18 років'), h('small', null, 'Замовлення містить алкоголь. Під час отримання потрібен документ.'))) : null,
+    saveBox,
     totals, err);
+  ['name', 'phone', 'email', 'city', 'address'].forEach(k => { if (f[k]) f[k].addEventListener('input', () => { S.draft[k] = f[k].value; }); });
   drawTotals();
   const send = h('button', { class: 'btn primary', style: 'width:100%', type: 'button' }, 'Підтвердити замовлення');
   foot.replaceChildren(send);
@@ -1004,6 +1045,11 @@ function renderCheckout() {
     try {
       const res = await placeOrder({ name, phone, email: f.email.value.trim(), delivery: checkout.delivery, city: f.city ? f.city.value.trim() : '', address: f.address ? f.address.value.trim() : '',
         date: f.date.value || null, time: f.time.value, card: f.card.value.trim(), comment: f.comment.value.trim(), payment: checkout.payment, age: alc ? checkout.age : false });
+      S.lastOrder = { code: res.code, phone, name, email: f.email.value.trim() };
+      if (S.user && S.accountsOk && saveProf) {
+        saveProfile({ name, phone, ...(f.city && f.city.value.trim() ? { city: f.city.value.trim() } : {}), ...(f.address && f.address.value.trim() ? { address: f.address.value.trim() } : {}), email: S.profile && S.profile.email ? S.profile.email : (f.email.value.trim() || S.user.email) }).then(() => renderAccBtn()).catch(() => {});
+      }
+      S.draft = {};
       S.cart = []; saveCart(); renderCartBadge(); showDone(res, phone);
     } catch (e) {
       err.textContent = e.message || 'Не вдалося оформити замовлення. Спробуйте ще раз';
@@ -1036,6 +1082,9 @@ function showDone(res, phone) {
     h('p', { style: 'color:var(--muted);font-size:14px' }, 'Збережіть код: за ним і телефоном можна дізнатися статус замовлення.'),
     h('p', null, h('b', null, 'Сума: ' + money(res.total)) , res.delivery_fee ? ' (разом з доставкою ' + money(res.delivery_fee) + ')' : ''),
     res.demo ? h('p', { class: 'err' }, 'Демо-режим: замовлення не збережено, бо немає підключення до бази.') : null,
+    S.user && !res.demo ? h('div', { class: 'acc-note ok' }, '✅ Замовлення збережено у вашому кабінеті. ', h('a', { onclick: () => { closeCart(); location.hash = '#account'; } }, 'Мої замовлення')) : null,
+    !S.user && S.accountsOk && !res.demo ? h('div', { class: 'acc-note' }, '💾 Хочете бачити це замовлення й оформлювати наступні швидше? ',
+      h('a', { onclick: () => openAuth('register', { name: (S.lastOrder || {}).name, phone: phone, email: (S.lastOrder || {}).email, claim: { code: res.code, phone: phone } }) }, 'Створити акаунт')) : null,
     h('div', { style: 'display:flex;gap:8px;justify-content:center;flex-wrap:wrap' },
       h('button', { class: 'btn', type: 'button', onclick: () => { navigator.clipboard && navigator.clipboard.writeText(res.code); toast('Код скопійовано'); } }, 'Скопіювати код'),
       h('button', { class: 'btn primary', type: 'button', onclick: () => { closeCart(); document.getElementById('track').scrollIntoView({ behavior: 'smooth' }); $('#trCode').value = res.code; $('#trPhone').value = phone; } }, 'Перейти до відстеження'))));
@@ -1071,6 +1120,271 @@ document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () 
 }));
 
 /* ======================= СТАРТ ======================= */
+
+
+/* ======================= АКАУНТИ ПОКУПЦІВ ======================= */
+const PHONE_OK = v => String(v || '').replace(/\D/g, '').length >= 9;
+function authErrText(msg) {
+  const m = String(msg || '');
+  if (/invalid login/i.test(m)) return 'Невірна пошта або пароль';
+  if (/not confirmed/i.test(m)) return 'Підтвердіть пошту: лист із посиланням уже мав надійти';
+  if (/already registered|already been registered/i.test(m)) return 'Акаунт із такою поштою вже є: увійдіть';
+  if (/password.*(at least|short|weak)/i.test(m)) return 'Пароль має містити щонайменше 6 символів';
+  if (/rate limit|too many|security purposes/i.test(m)) return 'Забагато спроб. Спробуйте трохи пізніше';
+  if (/valid email|invalid email/i.test(m)) return 'Вкажіть правильну пошту';
+  return m;
+}
+
+async function initAuth() {
+  if (DEMO) { S.authReady = true; return; }
+  try {
+    const t = await db.from('shop_customers').select('user_id', { count: 'exact', head: true });
+    S.accountsOk = !t.error || t.error.code === '42501' || /permission denied/i.test(t.error.message || '');
+  } catch (e) { S.accountsOk = false; }
+  if (!S.accountsOk) { S.authReady = true; renderAccBtn(); return; }
+  const { data } = await db.auth.getSession();
+  await applySession(data.session);
+  S.authReady = true;
+  db.auth.onAuthStateChange((ev, session) => {
+    setTimeout(async () => {
+      if (ev === 'PASSWORD_RECOVERY') { await applySession(session); openNewPassword(); return; }
+      if (ev === 'SIGNED_IN' || ev === 'SIGNED_OUT' || ev === 'USER_UPDATED') await applySession(session);
+    }, 0);
+  });
+}
+
+async function applySession(session) {
+  const prevId = S.user ? S.user.id : null;
+  S.user = session ? session.user : null;
+  if (!S.user) S.profile = null;
+  else if (prevId !== S.user.id || !S.profile) await loadProfile();
+  renderAccBtn();
+  if (S.user) tryPendingClaim();
+  if (S.view === 'checkout' && !$('#drawer').classList.contains('hidden') && prevId !== (S.user ? S.user.id : null)) renderCheckout();
+  if (location.hash === '#account') { if (S.user) routeBq(); else if (prevId) location.hash = '#catalog'; }   // вихід із кабінету; прямий перехід гостя обробляє routeBq
+}
+
+async function loadProfile() {
+  try {
+    const { data, error } = await db.from('shop_customers').select('*').eq('user_id', S.user.id).maybeSingle();
+    if (error) { S.profile = null; return; }
+    if (data) { S.profile = data; return; }
+    const md = S.user.user_metadata || {};
+    const row = { user_id: S.user.id, name: md.name || null, phone: md.phone || null, email: S.user.email || null };
+    const r = await db.from('shop_customers').upsert(row).select().maybeSingle();
+    S.profile = (!r.error && r.data) || row;
+  } catch (e) { S.profile = null; }
+}
+async function saveProfile(patch) {
+  if (!S.user) return { error: { message: 'Не ввійшли' } };
+  const row = { user_id: S.user.id, email: S.user.email || null, ...(S.profile || {}), ...patch };
+  const r = await db.from('shop_customers').upsert(row).select().maybeSingle();
+  if (!r.error) S.profile = r.data || row;
+  return r;
+}
+function renderAccBtn() {
+  const b = $('#accBtn');
+  b.classList.toggle('hidden', !S.accountsOk);
+  const nm = S.user ? ((S.profile && S.profile.name) || (S.user.email || '').split('@')[0] || 'Акаунт') : '';
+  $('#accName').textContent = S.user ? nm.trim().split(/\s+/)[0].slice(0, 14) : 'Увійти';
+  $('#accAva').textContent = S.user ? nm.trim().charAt(0).toUpperCase() : '👤';
+  b.title = S.user ? 'Мій кабінет' : 'Увійти або створити акаунт';
+}
+$('#accBtn').addEventListener('click', () => { if (S.user) location.hash = '#account'; else openAuth('login'); });
+
+/* вікно входу / реєстрації */
+function openAuth(mode, pre) {
+  if (!S.accountsOk) { toast('Акаунти ще не підключені'); return; }
+  pre = pre || {};
+  const box = $('#mbox');
+  const close = () => $('#modal').classList.add('hidden');
+  const tabs = cur => h('div', { class: 'tabs2' },
+    h('button', { type: 'button', class: cur === 'login' ? 'on' : '', onclick: () => openAuth('login', pre) }, 'Вхід'),
+    h('button', { type: 'button', class: cur === 'register' ? 'on' : '', onclick: () => openAuth('register', pre) }, 'Реєстрація'));
+  const msg = h('div', { class: 'err' });
+  const field = (label, props) => { const i = h('input', Object.assign({ class: 'in' }, props)); return [h('label', { class: 'f' }, label, i), i]; };
+  box.className = 'mbox auth';
+  if (mode === 'register') {
+    const [lN, iN] = field('Ім’я', { value: pre.name || '', autocomplete: 'name', maxlength: 80 });
+    const [lP, iP] = field('Телефон', { value: pre.phone || '', inputmode: 'tel', autocomplete: 'tel', placeholder: '+380…' });
+    const [lE, iE] = field('Email', { type: 'email', value: pre.email || '', autocomplete: 'email' });
+    const [lW, iW] = field('Пароль (мінімум 6 символів)', { type: 'password', autocomplete: 'new-password' });
+    const go = h('button', { class: 'btn primary', type: 'button', style: 'width:100%' }, 'Створити акаунт');
+    go.addEventListener('click', async () => {
+      msg.className = 'err'; msg.textContent = '';
+      const name = iN.value.trim(); const phone = iP.value.trim(); const email = iE.value.trim(); const password = iW.value;
+      if (name.length < 2) { msg.textContent = 'Вкажіть ім’я'; return; }
+      if (phone && !PHONE_OK(phone)) { msg.textContent = 'Вкажіть правильний номер телефону'; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Вкажіть правильну пошту'; return; }
+      if (password.length < 6) { msg.textContent = 'Пароль має містити щонайменше 6 символів'; return; }
+      go.disabled = true; go.textContent = 'Створюємо…';
+      const { data, error } = await db.auth.signUp({ email, password, options: { data: { name, phone } } });
+      go.disabled = false; go.textContent = 'Створити акаунт';
+      if (error) { msg.textContent = authErrText(error.message); return; }
+      if (pre.claim) { try { localStorage.setItem('bq_claim', JSON.stringify(pre.claim)); } catch (e) { /* ігноруємо */ } }
+      if (data && data.session) { await applySession(data.session); close(); toast('Акаунт створено'); return; }
+      box.replaceChildren(h('h3', null, '📬 Підтвердіть пошту'), h('p', null, 'Ми надіслали лист на ' + email + '. Перейдіть за посиланням у ньому, а потім увійдіть.'),
+        h('div', { class: 'acts' }, h('button', { class: 'btn primary', type: 'button', onclick: () => openAuth('login', { email }) }, 'До входу')));
+    });
+    box.replaceChildren(h('h3', null, 'Створити акаунт'), tabs('register'), lN, lP, lE, lW, msg, go,
+      h('p', { style: 'font-size:12px;color:var(--muted);margin:10px 0 0' }, 'Дані з акаунта автоматично підставляються в замовлення, а всі ваші замовлення зберігаються в кабінеті.'));
+    iN.focus();
+  } else {
+    const [lE, iE] = field('Email', { type: 'email', value: pre.email || '', autocomplete: 'username' });
+    const [lW, iW] = field('Пароль', { type: 'password', autocomplete: 'current-password' });
+    const go = h('button', { class: 'btn primary', type: 'button', style: 'width:100%' }, 'Увійти');
+    const doLogin = async () => {
+      msg.className = 'err'; msg.textContent = '';
+      go.disabled = true; go.textContent = 'Входимо…';
+      const { data, error } = await db.auth.signInWithPassword({ email: iE.value.trim(), password: iW.value });
+      go.disabled = false; go.textContent = 'Увійти';
+      if (error) { msg.textContent = authErrText(error.message); return; }
+      await applySession(data.session); close(); toast('Ви ввійшли');
+    };
+    go.addEventListener('click', doLogin);
+    iW.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    const forgot = h('button', { class: 'lnk', type: 'button' }, 'Забули пароль?');
+    forgot.addEventListener('click', async () => {
+      const email = iE.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.className = 'err'; msg.textContent = 'Спершу вкажіть пошту'; return; }
+      const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+      if (error) { msg.className = 'err'; msg.textContent = authErrText(error.message); return; }
+      msg.className = 'ok'; msg.textContent = 'Лист для відновлення пароля надіслано на ' + email;
+    });
+    box.replaceChildren(h('h3', null, 'Вхід в акаунт'), tabs('login'), lE, lW, msg, go, h('div', { style: 'text-align:center' }, forgot));
+    iE.focus();
+  }
+  $('#modal').classList.remove('hidden');
+}
+function openNewPassword() {
+  const box = $('#mbox'); box.className = 'mbox auth';
+  const i = h('input', { class: 'in', type: 'password', autocomplete: 'new-password' });
+  const msg = h('div', { class: 'err' });
+  const go = h('button', { class: 'btn primary', type: 'button', style: 'width:100%', onclick: async () => {
+    if (i.value.length < 6) { msg.textContent = 'Мінімум 6 символів'; return; }
+    const { error } = await db.auth.updateUser({ password: i.value });
+    if (error) { msg.textContent = authErrText(error.message); return; }
+    $('#modal').classList.add('hidden'); toast('Пароль змінено');
+  } }, 'Зберегти пароль');
+  box.replaceChildren(h('h3', null, 'Новий пароль'), h('label', { class: 'f' }, 'Новий пароль', i), msg, go);
+  $('#modal').classList.remove('hidden');
+}
+
+/* прив'язка гостьового замовлення (одразу після реєстрації або пізніше) */
+async function claimOrder(code, phone) {
+  const { data, error } = await db.rpc('claim_order', { p_code: code, p_phone: phone });
+  if (error) throw new Error(error.message);
+  return data;
+}
+async function tryPendingClaim() {
+  let c = null;
+  try { c = JSON.parse(localStorage.getItem('bq_claim') || 'null'); } catch (e) { c = null; }
+  if (!c || !c.code) return;
+  try { localStorage.removeItem('bq_claim'); await claimOrder(c.code, c.phone); toast('Замовлення ' + c.code + ' збережено у вашому кабінеті'); if (location.hash === '#account') renderAccountPage(); } catch (e) { /* код або телефон не збіглись: можна прив'язати вручну в кабінеті */ }
+}
+
+/* ======================= КАБІНЕТ ======================= */
+const ST_NAME = Object.fromEntries(STATUS);
+async function renderAccountPage() {
+  const box = document.querySelector('#accPage .wrap');
+  if (!S.authReady) { box.replaceChildren(h('div', { class: 'accp' }, h('p', { class: 'sub' }, 'Завантаження…'))); return; }
+  if (!S.user) {
+    box.replaceChildren(h('div', { class: 'accp' }, h('h1', null, 'Мій кабінет'), h('p', { class: 'sub' }, 'Увійдіть, щоб побачити свої замовлення й підставляти дані автоматично.'),
+      h('button', { class: 'btn primary', type: 'button', onclick: () => openAuth('login') }, 'Увійти'), ' ', h('button', { class: 'btn', type: 'button', onclick: () => openAuth('register') }, 'Створити акаунт')));
+    return;
+  }
+  const prof = S.profile || {};
+  const name = prof.name || (S.user.email || '').split('@')[0];
+  const tabBtn = (k, l) => h('button', { class: 'chip' + (S.accTab === k ? ' active' : ''), type: 'button', onclick: () => { S.accTab = k; renderAccountPage(); } }, l);
+  const body = h('div');
+  box.replaceChildren(h('div', { class: 'accp' },
+    h('button', { class: 'btn', type: 'button', onclick: () => { location.hash = '#catalog'; } }, '← До каталогу'),
+    h('h1', null, 'Привіт, ' + name), h('p', { class: 'sub' }, S.user.email),
+    h('div', { class: 'acc-tabs' }, tabBtn('orders', '📦 Мої замовлення'), tabBtn('data', '👤 Мої дані'), tabBtn('claim', '🔗 Прив’язати замовлення'),
+      h('button', { class: 'chip', type: 'button', style: 'margin-left:auto', onclick: async () => { await db.auth.signOut(); await applySession(null); toast('Ви вийшли'); location.hash = '#catalog'; } }, 'Вийти')),
+    body));
+  if (S.accTab === 'data') drawAccData(body, prof);
+  else if (S.accTab === 'claim') drawAccClaim(body);
+  else await drawAccOrders(body);
+}
+
+async function drawAccOrders(body) {
+  body.replaceChildren(h('p', { class: 'sub' }, 'Завантаження замовлень…'));
+  const { data, error } = await db.from('shop_orders').select('*, shop_order_items(*)').eq('user_id', S.user.id).order('created_at', { ascending: false }).limit(50);
+  if (location.hash !== '#account' || S.accTab !== 'orders') return;
+  if (error) { body.replaceChildren(h('p', { class: 'err' }, error.message)); return; }
+  if (!(data || []).length) {
+    body.replaceChildren(h('div', { class: 'acc-note' }, 'Тут з’являться ваші замовлення. Якщо ви оформлювали замовлення раніше без акаунта, його можна прив’язати на вкладці «Прив’язати замовлення».'),
+      h('a', { class: 'btn primary', href: '#catalog' }, 'Обрати букет'));
+    return;
+  }
+  body.replaceChildren(...data.map(o => {
+    const items = o.shop_order_items || [];
+    const idx = STATUS.findIndex(x => x[0] === o.status);
+    const line = o.status === 'cancelled' ? [h('span', { class: 'st cur', style: 'background:var(--danger)' }, 'Скасовано')]
+      : STATUS.slice(0, 5).map((x, i) => h('span', { class: 'st' + (i < idx ? ' done' : i === idx ? ' cur' : '') }, x[1]));
+    return h('div', { class: 'acc-order' },
+      h('div', { class: 'hd' }, h('b', null, '#' + o.code), h('span', { class: 'chip2 ' + o.status }, ST_NAME[o.status] || o.status), h('span', { style: 'color:var(--muted);font-size:13px;margin-left:auto' }, new Date(o.created_at).toLocaleDateString('uk-UA'))),
+      h('div', { class: 'timeline', style: 'margin:10px 0 0' }, ...line),
+      h('ul', null, ...items.map(i => h('li', null, h('span', null, i.name + ' × ' + i.qty), h('span', null, money(i.unit_price * i.qty))))),
+      h('div', { class: 'ft' }, h('div', null, h('b', null, money(o.total)), o.delivery_date ? h('span', { style: 'color:var(--muted);font-size:13px' }, ' · дата: ' + new Date(o.delivery_date).toLocaleDateString('uk-UA')) : null),
+        h('button', { class: 'btn small', type: 'button', onclick: () => reorder(items) }, '🔁 Замовити ще раз')));
+  }));
+}
+function reorder(items) {
+  let added = 0; let skipped = 0;
+  items.forEach(i => {
+    const uid = () => 'l' + Date.now() + Math.random().toString(36).slice(2, 6);
+    if (i.kind === 'bouquet' && S.bouquets.some(b => b.id === i.ref_id)) { S.cart.push({ uid: uid(), kind: 'bouquet', id: i.ref_id, qty: i.qty }); added++; }
+    else if (i.kind === 'product' && pById[i.ref_id]) { S.cart.push({ uid: uid(), kind: 'product', id: i.ref_id, qty: i.qty }); added++; }
+    else if (i.kind === 'custom' && Array.isArray(i.details) && i.details.length && i.details.every(d => d.id && pById[d.id])) { S.cart.push({ uid: uid(), kind: 'custom', qty: i.qty, comps: i.details.map(d => ({ id: d.id, qty: d.qty })) }); added++; }
+    else skipped++;
+  });
+  saveCart(); renderCartBadge();
+  if (!added) { toast('Цих позицій уже немає в каталозі'); return; }
+  toast('Додано в кошик: ' + added + (skipped ? ' (' + skipped + ' більше немає в каталозі)' : ''));
+  openCart('cart');
+}
+function drawAccData(body, prof) {
+  const field = (label, val, props) => { const i = h('input', Object.assign({ class: 'in', value: val || '' }, props)); return [h('label', { class: 'f' }, label, i), i]; };
+  const [lN, iN] = field('Ім’я', prof.name, { maxlength: 80, autocomplete: 'name' });
+  const [lP, iP] = field('Телефон', prof.phone, { inputmode: 'tel', autocomplete: 'tel' });
+  const [lC, iC] = field('Місто', prof.city, { autocomplete: 'address-level2' });
+  const [lA, iA] = field('Адреса доставки', prof.address, { autocomplete: 'street-address' });
+  const msg = h('div', { class: 'err' });
+  const save = h('button', { class: 'btn primary', type: 'button', onclick: async () => {
+    msg.className = 'err'; msg.textContent = '';
+    if (iN.value.trim().length < 2) { msg.textContent = 'Вкажіть ім’я'; return; }
+    if (iP.value.trim() && !PHONE_OK(iP.value)) { msg.textContent = 'Вкажіть правильний номер телефону'; return; }
+    const r = await saveProfile({ name: iN.value.trim(), phone: iP.value.trim() || null, city: iC.value.trim() || null, address: iA.value.trim() || null });
+    if (r.error) { msg.textContent = r.error.message; return; }
+    msg.className = 'ok'; msg.textContent = 'Збережено'; renderAccBtn(); toast('Дані збережено');
+    const hh = document.querySelector('#accPage h1'); if (hh) hh.textContent = 'Привіт, ' + (S.profile.name || '');
+  } }, 'Зберегти');
+  const pw = h('input', { class: 'in', type: 'password', autocomplete: 'new-password', placeholder: 'Новий пароль (мінімум 6)' });
+  const pwMsg = h('div', { class: 'err' });
+  const pwBtn = h('button', { class: 'btn', type: 'button', onclick: async () => {
+    pwMsg.className = 'err'; pwMsg.textContent = '';
+    if (pw.value.length < 6) { pwMsg.textContent = 'Мінімум 6 символів'; return; }
+    const { error } = await db.auth.updateUser({ password: pw.value });
+    if (error) { pwMsg.textContent = authErrText(error.message); return; }
+    pw.value = ''; pwMsg.className = 'ok'; pwMsg.textContent = 'Пароль змінено';
+  } }, 'Змінити пароль');
+  body.replaceChildren(h('div', { class: 'acc-form' }, h('p', { class: 'sub' }, 'Ці дані автоматично підставляються під час оформлення замовлення.'), lN, lP, lC, lA, msg, save,
+    h('h3', { style: 'margin:26px 0 8px' }, 'Пароль'), pw, pwMsg, pwBtn));
+}
+function drawAccClaim(body) {
+  const ci = h('input', { class: 'in', placeholder: 'Код замовлення (наприклад A1B2C3D4)', maxlength: 12, autocomplete: 'off' });
+  const pi = h('input', { class: 'in', placeholder: 'Телефон із замовлення', inputmode: 'tel', value: (S.profile && S.profile.phone) || '' });
+  const msg = h('div', { class: 'err' });
+  const go = h('button', { class: 'btn primary', type: 'button', onclick: async () => {
+    msg.className = 'err'; msg.textContent = '';
+    if (!ci.value.trim() || !PHONE_OK(pi.value)) { msg.textContent = 'Вкажіть код і телефон'; return; }
+    try { const r = await claimOrder(ci.value.trim(), pi.value.trim()); S.accTab = 'orders'; toast('Замовлення ' + r.code + ' додано в кабінет'); renderAccountPage(); } catch (e) { msg.textContent = e.message; }
+  } }, 'Прив’язати');
+  body.replaceChildren(h('div', { class: 'acc-form' }, h('p', { class: 'sub' }, 'Оформлювали замовлення без акаунта? Введіть його код і телефон, і воно з’явиться у вашому кабінеті.'),
+    h('label', { class: 'f' }, 'Код замовлення', ci), h('label', { class: 'f' }, 'Телефон', pi), msg, go));
+}
 
 /* ======================= ОКРЕМА СТОРІНКА БУКЕТА ======================= */
 let bqIdx = 0;
@@ -1162,15 +1476,25 @@ function openViewer(list, start, onChange) {
 /* маршрутизація: #bouquet=<id> відкриває окрему сторінку букета */
 const baseTitle = document.title;
 function routeBq() {
-  const m = location.hash.match(/^#bouquet=(.+)$/);
-  const page = document.getElementById('bqPage'); const mainEl = document.getElementById('top');
-  if (m) {
+  const hash = location.hash;
+  const mb = hash.match(/^#bouquet=(.+)$/);
+  const isAcc = hash === '#account';
+  const bq = document.getElementById('bqPage'); const acc = document.getElementById('accPage'); const mainEl = document.getElementById('top');
+  const only = el => { mainEl.classList.add('hidden'); bq.classList.add('hidden'); acc.classList.add('hidden'); el.classList.remove('hidden'); };
+  if (mb) {
     if (!S.loaded) return;
-    mainEl.classList.add('hidden'); page.classList.remove('hidden');
-    renderBouquetPage(decodeURIComponent(m[1]));
+    only(bq);
+    renderBouquetPage(decodeURIComponent(mb[1]));
     window.scrollTo(0, 0);
-  } else if (!page.classList.contains('hidden')) {
-    page.classList.add('hidden'); mainEl.classList.remove('hidden');
+  } else if (isAcc) {
+    if (!S.loaded) return;
+    if (S.authReady && !S.user) { location.hash = '#catalog'; setTimeout(() => openAuth('login'), 50); return; }
+    only(acc);
+    $('#bqBar').classList.add('hidden');
+    renderAccountPage();
+    window.scrollTo(0, 0);
+  } else if (!bq.classList.contains('hidden') || !acc.classList.contains('hidden')) {
+    bq.classList.add('hidden'); acc.classList.add('hidden'); mainEl.classList.remove('hidden');
     $('#bqBar').classList.add('hidden');
     document.title = (S.settings.shop && S.settings.shop.name ? S.settings.shop.name + ' — ' : '') + 'букети з мила, цукерок і не тільки';
     bqCur = null; bqFromList = false;
@@ -1197,6 +1521,7 @@ $('#bqBarAdd').addEventListener('click', () => { if (bqCur) addBouquet(bqCur); }
   }
   renderShell(); renderCatalog(); renderGallery(); renderBuilder(); renderCartBadge();
   routeBq();
+  initAuth().then(() => { renderAccBtn(); routeBq(); });
 })();
 </script>
 </body>
